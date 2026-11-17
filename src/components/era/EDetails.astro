@@ -1,0 +1,82 @@
+---
+// Details: Obsidian card 1328 × 100vh (779 in the reference capture, 723 in the v723 one; radius 32) with a centred 504×592 looping graphic (a plain tilted disc with a striped rim and a dot matrix) and two small text
+// blocks (top-left, bottom-right). On the reference these blocks hold identifiers and outbound links; here they are
+// Lorem placeholders and every control is inert (href="#"). data-ref values are for the 1440×723 QA viewport (card = 100vh); the 779 capture is in reference/era/REFERENCE.md "Address".
+import { era } from '../../data/era.ts';
+const { a, b } = era.details;
+const doc = 'M6 3h9l4 4v14H6zM9 11h7M9 15h7';       // small "note" glyph (decorative)
+const out = 'M8 16 16 8M10 8h6v6';                  // small "arrow" glyph (decorative)
+---
+<section class="edet" data-qa="era-details" data-ref="0,2973,1440,835">
+  <div class="edet__card" data-qa="era-details-card" data-ref="56,3029,1328,723">
+    <svg class="edet__art" width="504" height="592" viewBox="0 0 504 592" aria-hidden="true" data-edet-art data-qa="era-details-art" data-ref="468,3095,504,592">
+      <g transform="rotate(24 252 296)">
+        <g data-edet-bob>
+          <clipPath id="edet-edge"><path d="M252 44a206 252 0 1 1 0 504h34a206 252 0 1 0 0-504z" /></clipPath>
+          <ellipse cx="286" cy="296" rx="206" ry="252" fill="var(--color-limestone)" stroke="var(--color-limestone)" stroke-width="5" />
+          <g clip-path="url(#edet-edge)"><g data-edet-stripes>
+            {Array.from({ length: 16 }, (_, k) => <rect x="240" y={-48 + k * 48} width="270" height="24" fill="var(--color-obsidian)" />)}
+          </g></g>
+          <ellipse cx="252" cy="296" rx="206" ry="252" fill="var(--color-obsidian)" stroke="var(--color-limestone)" stroke-width="5" />
+          <ellipse cx="252" cy="296" rx="184" ry="228" fill="none" stroke="var(--color-limestone)" stroke-width="5" />
+          <g transform="translate(252 296)" fill="var(--color-limestone)">
+            {Array.from({ length: 49 }, (_, k) => { const x = (k % 7) - 3, y = Math.floor(k / 7) - 3; const dd = Math.hypot(x, y); return dd < 3.7 && <circle cx={x * 30} cy={y * 30} r={Math.max(3, 11.5 - dd * 2.3)} data-d={dd.toFixed(2)} />; })}
+          </g>
+        </g>
+      </g>
+    </svg>
+
+    <div class="edet__block edet__block--a" data-qa="era-details-a" data-ref="144,3117,277,124">
+      <h3 class="display edet__h5" data-qa="era-details-a-title" data-ref="144,3117,277,40">{a.title}</h3>
+      <p class="edet__row"><span>{a.value}</span><svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><path d={doc} /></svg></p>
+      <a class="edet__row edet__link" href={a.link.href}><span>{a.link.label}</span><svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><path d={out} /></svg></a>
+    </div>
+    <div class="edet__block edet__block--b" data-qa="era-details-b" data-ref="1010,3540,286,124">
+      <h3 class="display edet__h5" data-qa="era-details-b-title" data-ref="1010,3540,286,40">{b.title}</h3>
+      <p class="edet__row edet__row--b"><svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><path d={doc} /></svg><span>{b.value}</span></p>
+      <a class="edet__row edet__row--b edet__link" href={b.link.href}><svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><path d={out} /></svg><span>{b.link.label}</span></a>
+    </div>
+  </div>
+</section>
+
+<style>
+  .edet { box-sizing: border-box; height: calc(100vh + 112px); min-height: 752px; padding: var(--spacing-56); }
+  .edet__card { position: relative; max-width: 1328px; height: 100%; margin-inline: auto; border-radius: var(--radius-3xl-2); background: var(--color-obsidian); overflow: hidden; }
+  .edet__art { position: absolute; left: 50%; top: 50%; margin: -296px 0 0 -252px; }
+  .edet__block { position: absolute; display: flex; flex-direction: column; gap: var(--spacing-4); color: var(--color-pumice); }
+  .edet__block--a { left: 88px; top: 88px; align-items: flex-start; }
+  .edet__block--b { right: 88px; bottom: 88px; align-items: flex-end; }
+  .edet__h5 { padding: var(--spacing-4); font-size: var(--text-heading); line-height: 32px; letter-spacing: var(--tracking-heading); white-space: nowrap; }
+  .edet__row { display: flex; align-items: center; gap: var(--spacing-8); margin: 0; padding: var(--spacing-4); font: 500 20px/30px var(--font-body); white-space: nowrap; }
+  .edet__row--b { gap: var(--spacing-16); }
+  .edet__row svg { flex: none; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .edet__link { color: var(--color-ember); transition: color .25s ease; }
+  .edet__link:hover, .edet__link:focus-visible { color: var(--color-limestone); }
+
+  @media (max-width: 1100px) {
+    .edet { height: auto; padding: var(--spacing-20); }
+    .edet__card { height: auto; display: flex; flex-direction: column; align-items: stretch; gap: var(--spacing-24); padding: var(--spacing-32) var(--spacing-24); }
+    .edet__art { position: static; margin: 0 auto; width: min(100%, 360px); height: auto; order: 2; }
+    .edet__block { position: static; }
+    .edet__block--a { order: 1; }
+    .edet__block--b { order: 3; }
+    .edet__h5 { white-space: normal; font-size: 28px; line-height: 28px; }
+  }
+</style>
+
+<script>
+  import { gsap, ScrollTrigger, reduced } from '../../scripts/motion.ts';
+  const svg = document.querySelector<SVGSVGElement>('[data-edet-art]');
+  if (svg && !reduced) {
+    const T = 8;
+    const tl = gsap.timeline({ repeat: -1, paused: true, defaults: { ease: 'none' } });
+    // rim stripes travel exactly one 48px period per half loop, the disc bobs once per loop => seamless
+    tl.fromTo(svg.querySelector('[data-edet-stripes]'), { y: 0 }, { y: 96, duration: T }, 0)
+      .to(svg.querySelector('[data-edet-bob]'), { y: -10, duration: T / 2, ease: 'sine.inOut', yoyo: true, repeat: 1 }, 0);
+    svg.querySelectorAll<SVGCircleElement>('[data-d]').forEach((d) => {
+      gsap.set(d, { transformOrigin: '50% 50%' });
+      [0, T / 2].forEach((t) => tl.to(d, { scale: 0.45, duration: 0.45, ease: 'sine.inOut', yoyo: true, repeat: 1 }, t + 0.2 + Number(d.dataset.d) * 0.22));
+    });
+    ScrollTrigger.create({ trigger: svg, start: 'top bottom', end: 'bottom top', onToggle: (s) => (s.isActive ? tl.play() : tl.pause()) });
+  }
+</script>

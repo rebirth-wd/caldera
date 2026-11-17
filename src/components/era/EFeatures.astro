@@ -1,0 +1,78 @@
+---
+// Features: two 120px left-aligned lines, then three 395×520 colour cards in a staircase (each 216px lower than
+// the previous one) that rise in from below. Rects: reference/era/REFERENCE.md "Features" (1440×779 viewport).
+import { era } from '../../data/era.ts';
+import EGlyph from './EGlyph.astro';
+const { lines, cards } = era.features;
+const X = [80, 523, 965], Y = [1141, 1357, 1573];   // 1440×723 QA viewport (779 capture: +56)
+---
+<section class="efeat" data-qa="era-features" data-ref="0,723,1440,1450">
+  <div class="efeat__inner">
+    <h2 class="display efeat__title" data-reveal="chars" data-qa="era-features-heading" data-ref="56,779,1328,274">
+      {lines.map((l, i) => <span class="efeat__line">{l}{i < lines.length - 1 ? ' ' : ''}</span>)}
+    </h2>
+    <div class="efeat__cards" data-efeat-cards data-qa="era-features-cards" data-ref="56,1117,1328,1000">
+      {cards.map((c, i) => (
+        <div class="efeat__col" style={`--step:${i}`}>
+          <article class={`efeat__card efeat__card--${c.tone}`} data-efeat-card data-qa={`era-card-${i + 1}`} data-ref={`${X[i]},${Y[i]},395,520`}>
+            <div class="efeat__tile" data-qa={`era-card-tile-${i + 1}`} data-ref={`${X[i] + 40},${Y[i] + 40},83,83`}><EGlyph kind={c.glyph} /></div>
+            <div class="efeat__info">
+              <h3 class="display efeat__h3" data-qa={`era-card-h3-${i + 1}`} data-ref={`${X[i] + 40},${Y[i] + 228},315,96`}>{c.title}</h3>
+              <p class="efeat__p">{c.body}</p>
+            </div>
+          </article>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .efeat { box-sizing: border-box; height: 1449.6px; padding: var(--spacing-56); overflow: clip; }
+  .efeat__inner { max-width: 1328px; margin-inline: auto; display: flex; flex-direction: column; gap: var(--spacing-64); }
+  .efeat__title { padding: var(--spacing-24); font-size: 120px; line-height: 112.8px; color: var(--color-obsidian); }
+  .efeat__line { display: block; white-space: nowrap; }
+
+  .efeat__cards { display: flex; height: 1000px; }
+  .efeat__col { flex: 1 1 0; min-width: 0; padding: var(--spacing-24); padding-top: calc(var(--spacing-24) + var(--step) * 216px); }
+  .efeat__card { box-sizing: border-box; height: 520px; padding: var(--spacing-40); border-radius: var(--radius-3xl); display: flex; flex-direction: column; justify-content: space-between; align-items: flex-start; will-change: transform; }
+  .efeat__card--ember { background: var(--color-ember); color: var(--color-limestone); --tile: var(--color-limestone); --glyph: var(--color-ember); }
+  .efeat__card--sulfur { background: var(--color-sulfur); color: var(--color-obsidian); --tile: var(--color-obsidian); --glyph: var(--color-sulfur); }
+  .efeat__card--violet { background: var(--color-plasma-violet); color: var(--color-limestone); --tile: var(--color-limestone); --glyph: var(--color-plasma-violet); }
+  .efeat__tile { width: 83px; height: 83px; flex: none; display: grid; place-items: center; border-radius: var(--radius-small); background: var(--tile); color: var(--glyph); }
+  .efeat__info { width: 100%; display: flex; flex-direction: column; gap: var(--spacing-24); padding-bottom: var(--spacing-24); }
+  .efeat__h3 { min-height: 96px; font-size: var(--text-heading-lg); line-height: 48px; }
+  .efeat__p { margin: 0; min-height: 108px; font: 500 18px/27px var(--font-body); }
+
+  @media (max-width: 1100px) {
+    .efeat { height: auto; padding: var(--spacing-56) var(--spacing-20) var(--spacing-80); }
+    .efeat__inner { gap: var(--spacing-32); }
+    .efeat__title { padding: 0; font-size: clamp(40px, 10.5vw, 120px); line-height: .94; }
+    .efeat__line { white-space: normal; }
+    .efeat__cards { flex-direction: column; height: auto; gap: var(--spacing-16); }
+    .efeat__col { padding: 0; }
+    .efeat__card { height: auto; min-height: 420px; gap: var(--spacing-64); }
+    .efeat__h3, .efeat__p { min-height: 0; }
+  }
+  @media (max-width: 600px) {
+    .efeat__card { padding: var(--spacing-24); min-height: 360px; }
+    .efeat__h3 { font-size: 40px; line-height: 40px; }
+    .efeat__p { font-size: 16px; line-height: 24.8px; }
+  }
+</style>
+
+<script>
+  import { gsap, EASE, reduced } from '../../scripts/motion.ts';
+  // Reference: cards sit at opacity 0 / translateY(+1000px) until the row scrolls in, then rise into the staircase.
+  const row = document.querySelector<HTMLElement>('[data-efeat-cards]');
+  if (row && !reduced) {
+    const cards = [...row.querySelectorAll<HTMLElement>('[data-efeat-card]')];
+    const mm = gsap.matchMedia();
+    mm.add('(min-width: 1101px)', () => {
+      gsap.from(cards, { y: 1000, opacity: 0, duration: 1.1, ease: EASE, stagger: 0.12, scrollTrigger: { trigger: row, start: 'top 85%', once: true } });
+    });
+    mm.add('(max-width: 1100px)', () => {
+      cards.forEach((c) => gsap.from(c, { y: 60, opacity: 0, duration: 0.8, ease: EASE, scrollTrigger: { trigger: c, start: 'top 90%', once: true } }));
+    });
+  }
+</script>

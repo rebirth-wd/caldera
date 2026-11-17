@@ -1,0 +1,44 @@
+---
+// Looping side graphic for the reserve section: stacks of plain striped discs (line art, Obsidian on Limestone),
+// standing in for the reference's static stacked-disc artwork. No emblem or lettering on the faces.
+// One repeating GSAP timeline per svg, paused while off-screen; stripes travel one full period per loop => seamless.
+const { w = 401, h = 320, variant = 'a' } = Astro.props;
+type Disc = { cx: number; cy: number; rx: number; ry: number; t: number };
+const stack = (cx: number, base: number, rx: number, n: number, drift: number[]): Disc[] =>
+  Array.from({ length: n }, (_, i) => ({ cx: cx + (drift[i] || 0), cy: base - i * 34, rx, ry: rx * 0.36, t: 26 }));
+const stacks: Disc[][] = variant === 'a'
+  ? [stack(150, 150, 120, 2, [0, 10]), stack(250, 262, 132, 3, [0, -8, 6])]
+  : [stack(190, 262, 150, 4, [0, 10, -6, 8]), stack(410, 280, 96, 2, [0, -6])];
+const side = (d: Disc) => `M${d.cx - d.rx} ${d.cy}v${d.t}A${d.rx} ${d.ry} 0 0 0 ${d.cx + d.rx} ${d.cy + d.t}v${-d.t}A${d.rx} ${d.ry} 0 0 1 ${d.cx - d.rx} ${d.cy}Z`;
+const uid = `ea-${variant}`;
+const P = 44; // stripe period
+---
+<svg class="eart" width={w} height={h} viewBox={`0 0 ${w} ${h}`} aria-hidden="true" data-eart>
+  {stacks.map((s, si) => s.map((d, i) => (
+    <g data-disc={i === s.length - 1 ? 'top' : undefined}>
+      <clipPath id={`${uid}-${si}-${i}`}><path d={side(d)} /></clipPath>
+      <path d={side(d)} fill="var(--color-limestone)" />
+      <g clip-path={`url(#${uid}-${si}-${i})`}>
+        <g data-stripes={(si + i) % 2 ? P : -P}>
+          {Array.from({ length: Math.ceil((d.rx * 2) / P) + 3 }, (_, k) => <rect x={d.cx - d.rx - P + k * P} y={d.cy - d.ry} width={P / 2} height={d.t + d.ry * 2} fill="var(--color-obsidian)" />)}
+        </g>
+      </g>
+      <path d={side(d)} fill="none" stroke="var(--color-obsidian)" stroke-width="3" stroke-linejoin="round" />
+      <ellipse cx={d.cx} cy={d.cy} rx={d.rx} ry={d.ry} fill="var(--color-limestone)" stroke="var(--color-obsidian)" stroke-width="3" />
+      <ellipse cx={d.cx} cy={d.cy} rx={d.rx - 16} ry={d.ry - 7} fill="var(--color-obsidian)" />
+    </g>
+  )))}
+</svg>
+<style>
+  .eart { display: block; overflow: visible; }
+</style>
+<script>
+  import { gsap, ScrollTrigger, reduced } from '../../scripts/motion.ts';
+  if (!reduced) document.querySelectorAll<SVGSVGElement>('[data-eart]').forEach((svg) => {
+    const T = 6;
+    const tl = gsap.timeline({ repeat: -1, paused: true, defaults: { ease: 'none' } });
+    svg.querySelectorAll<SVGGElement>('[data-stripes]').forEach((g) => tl.fromTo(g, { x: 0 }, { x: Number(g.dataset.stripes), duration: T }, 0));
+    svg.querySelectorAll<SVGGElement>('[data-disc="top"]').forEach((g, i) => tl.to(g, { y: -10, duration: T / 4, ease: 'sine.inOut', yoyo: true, repeat: 1 }, i * (T / 2)));
+    ScrollTrigger.create({ trigger: svg, start: 'top bottom', end: 'bottom top', onToggle: (s) => (s.isActive ? tl.play() : tl.pause()) });
+  });
+</script>

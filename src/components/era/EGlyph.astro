@@ -1,0 +1,14 @@
+---
+// 7×7 dot-matrix glyphs for the 83px icon tiles (64px glyph). Rows of '1'/'0'.
+const { kind = 'bolt', size = 64 } = Astro.props;
+const maps: Record<string, string[]> = {
+  bolt:   ['0000110', '0001100', '0011000', '0111110', '0001100', '0011000', '0110000'],
+  rings:  ['0011100', '0100010', '1001001', '1011101', '1001001', '0100010', '0011100'],
+  shield: ['1111111', '1100011', '1101011', '1100011', '0110110', '0011100', '0001000'],
+};
+const rows = maps[kind] || maps.bolt;
+const pitch = 64 / 7;
+---
+<svg width={size} height={size} viewBox="0 0 64 64" aria-hidden="true" fill="currentColor">
+  {rows.flatMap((row, y) => [...row].map((c, x) => c === '1' && <circle cx={(x + 0.5) * pitch} cy={(y + 0.5) * pitch} r="3.4" />))}
+</svg>
