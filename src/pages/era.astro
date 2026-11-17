@@ -1,0 +1,41 @@
+---
+// /era — layout replica of the reference inner page, Lorem Ipsum only. No 112px spacer here: on the reference
+// the header overlays the full-viewport Ember hero (reference/era/REFERENCE.md).
+import Base from '../layouts/Base.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import EHero from '../components/era/EHero.astro';
+import EFeatures from '../components/era/EFeatures.astro';
+import EReserve from '../components/era/EReserve.astro';
+import EDetails from '../components/era/EDetails.astro';
+import EMarks from '../components/era/EMarks.astro';
+import { era } from '../data/era.ts';
+---
+<Base title={era.meta.title} description={era.meta.description}>
+  <Header />
+  <main class="era">
+    <EHero /><EFeatures /><EReserve /><EDetails /><EMarks />
+  </main>
+  <Footer />
+</Base>
+
+<!-- Header "orange" variant: while the page is at the top the header sits on the Ember hero, so its links, icons and
+     dividers are Limestone and the CTA is a Limestone pill with Ember text (measured). Applied from this page only. -->
+<script is:inline>
+  (function () {
+    var root = document.documentElement;
+    function sync() { root.classList.toggle('era-top', window.scrollY <= 13); }
+    sync(); window.addEventListener('scroll', sync, { passive: true });
+  })();
+</script>
+<style is:global>
+  /* :not(:has(expanded burger)) keeps the normal colours while the mobile menu panel (Limestone) is open */
+  html.era-top .hdr:not(:has([aria-expanded='true'])) .hdr-bar :is(.hdr-link, .hdr-social, .hdr-burger) { color: var(--color-limestone); }
+  html.era-top .hdr:not(:has([aria-expanded='true'])) .hdr-bar .hdr-burger { border-color: var(--color-limestone); }
+  html.era-top .hdr:not(:has([aria-expanded='true'])) .hdr-bar .hdr-logo svg { color: var(--color-limestone) !important; }
+  html.era-top .hdr .hdr-bar .hdr-divider::before { border-left-color: var(--color-limestone); }
+  html.era-top .hdr .hdr-bar .hdr-link:not([aria-current='page'])::after { background: var(--color-limestone); }
+  html.era-top .hdr:not(:has([aria-expanded='true'])) .hdr-bar .hdr-cta { background: var(--color-limestone); color: var(--color-ember); }
+  html.era-top .hdr:not(:has([aria-expanded='true'])) .hdr-bar .hdr-cta:hover { background: var(--color-obsidian); color: var(--color-limestone); }
+  .hdr .hdr-link, .hdr .hdr-social, .hdr .hdr-cta { transition: color .3s ease, background-color .3s ease; }
+</style>

@@ -1,0 +1,63 @@
+---
+// Looping line-art graphic for the index banner (replaces the reference's static illustration, 630×516 at 714,36,
+// clipped by the banner). House style: obsidian solids, chalk dotted strokes. One repeating GSAP timeline, paused off-screen.
+const discs = [ { x: 0, ry: 78 }, { x: 62, ry: 92 }, { x: 124, ry: 106 }, { x: 186, ry: 120 } ];
+const dash = (rx: number, ry: number, approx: number) => { const c = Math.PI * (3 * (rx + ry) - Math.sqrt((3 * rx + ry) * (rx + 3 * ry))); return +(c / Math.round(c / approx)).toFixed(3); };
+---
+<svg class="bg" viewBox="0 0 630 516" preserveAspectRatio="xMidYMid slice" aria-hidden="true" data-blog-graphic>
+  <g transform="translate(96 150) rotate(27)">
+    <!-- axis -->
+    <line x1="-70" y1="0" x2="300" y2="0" stroke="var(--color-obsidian)" stroke-width="16" stroke-linecap="round" />
+    <line x1="-70" y1="0" x2="300" y2="0" stroke="var(--color-chalk)" stroke-width="3" stroke-linecap="round" stroke-dasharray="0.1 11.9" data-flow="12" />
+    <rect x="-96" y="-13" width="34" height="26" rx="8" fill="var(--color-obsidian)" />
+    <!-- body -->
+    <g>
+      <rect x="250" y="-150" width="330" height="300" rx="34" fill="var(--color-obsidian)" />
+      <rect x="274" y="-126" width="282" height="252" rx="20" fill="none" stroke="var(--color-chalk)" stroke-width="3" stroke-linecap="round" stroke-dasharray="0.1 9.9" opacity=".8" data-flow="-10" />
+      <rect x="308" y="-78" width="124" height="96" rx="16" fill="var(--color-chalk)" />
+      <path d="M338 -8 l32 -40 l32 40 z" fill="var(--color-obsidian)" data-mark />
+      <circle cx="330" cy="72" r="13" fill="var(--color-chalk)" data-led />
+      <circle cx="372" cy="72" r="13" fill="none" stroke="var(--color-chalk)" stroke-width="3" />
+    </g>
+    <!-- discs -->
+    {discs.map((d) => (
+      <g data-disc transform={`translate(${d.x} 0)`}>
+        <ellipse cx="14" cy="0" rx="26" ry={d.ry} fill="var(--color-obsidian)" />
+        <ellipse cx="0" cy="0" rx="26" ry={d.ry} fill="var(--color-chalk)" stroke="var(--color-obsidian)" stroke-width="6" />
+        <ellipse cx="0" cy="0" rx="17" ry={d.ry - 18} fill="var(--color-obsidian)" />
+        <ellipse cx="0" cy="0" rx="11" ry={d.ry - 34} fill="none" stroke="var(--color-chalk)" stroke-width="2.5" stroke-linecap="round"
+          stroke-dasharray={`0.1 ${dash(11, d.ry - 34, 9) - 0.1}`} data-flow={dash(11, d.ry - 34, 9)} />
+      </g>
+    ))}
+    <!-- pulses travelling down the axis -->
+    {[0, 1, 2].map(() => <circle r="7" cx="-60" cy="0" fill="var(--color-chalk)" stroke="var(--color-obsidian)" stroke-width="4" opacity="0" data-pulse />)}
+  </g>
+</svg>
+<style>
+  .bg { position: absolute; left: 0; top: 0; width: 100%; height: 100%; overflow: visible; }
+</style>
+<script>
+  import { gsap, reduced } from '../../scripts/motion';
+  document.querySelectorAll<SVGSVGElement>('[data-blog-graphic]').forEach((svg) => {
+    const L = 6; // loop length (s); every track returns to its start value at t = L
+    const tl = gsap.timeline({ repeat: -1, paused: true, defaults: { ease: 'sine.inOut' } });
+    svg.querySelectorAll<SVGElement>('[data-flow]').forEach((el) => {
+      tl.fromTo(el, { strokeDashoffset: 0 }, { strokeDashoffset: -Number(el.dataset.flow) * 6, duration: L, ease: 'none' }, 0);
+    });
+    svg.querySelectorAll<SVGGElement>('[data-disc]').forEach((d, i) => {
+      const base = i * 62;
+      tl.fromTo(d, { attr: { transform: `translate(${base} 0)` } }, { attr: { transform: `translate(${base + 20 - i * 3} 0)` }, duration: 1.1, yoyo: true, repeat: 1 }, 0.4 + i * 0.55);
+    });
+    svg.querySelectorAll<SVGElement>('[data-pulse]').forEach((p, i) => {
+      const at = i * 2;
+      tl.fromTo(p, { attr: { cx: -60 }, opacity: 0 }, { attr: { cx: 236 }, duration: 1.7, ease: 'power1.inOut' }, at)
+        .to(p, { opacity: 1, duration: 0.2, ease: 'none' }, at).to(p, { opacity: 0, duration: 0.2, ease: 'none' }, at + 1.5);
+    });
+    const led = svg.querySelector('[data-led]'); const mark = svg.querySelector('[data-mark]');
+    [1.6, 3.6, 5.6].forEach((t) => tl.to(led, { opacity: 0.15, duration: 0.18, yoyo: true, repeat: 1, ease: 'none' }, t));
+    tl.to(mark, { y: -6, duration: 1.5, yoyo: true, repeat: 3, transformOrigin: '50% 50%' }, 0);
+    tl.set({}, {}, L);
+    if (reduced) { tl.progress(0.2); return; }
+    new IntersectionObserver(([e]) => (e.isIntersecting ? tl.play() : tl.pause()), { threshold: 0.05 }).observe(svg);
+  });
+</script>

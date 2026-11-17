@@ -1,0 +1,62 @@
+---
+// "Scale": centred heading + dotted pill over three fused Limestone tiles.
+// Rects from reference/metalayer/REFERENCE.md "Scale" (section 0,3772,1440,909).
+import { mScale as d } from '../../data/metalayer.ts';
+import RDotGlyph from '../rollups/RDotGlyph.astro';
+const xs = [56, 504, 952];
+const neck = 'M-1 33H0A8 8 0 0 0 16 33H17V108H16A8 8 0 0 0 0 108H-1Z';
+---
+<section class="ms" data-qa="m-scale" data-ref="0,3772,1440,909">
+  <h2 class="display ms__title" data-reveal="chars" data-qa="m-scale-h2" data-ref="400,3972,640,88">{d.title}</h2>
+  <a class="btn btn-dotted ms__btn" href={d.button.href} data-qa="m-scale-btn" data-ref="610,4100,221,48">{d.button.label}</a>
+  <div class="ms__tiles" data-ms-tiles data-qa="m-scale-tiles" data-ref="56,4228,1328,293">
+    {d.tiles.map((t, i) => (
+      <>
+        {i > 0 && <svg class="ms__neck" width="16" height="141" viewBox="0 0 16 141" preserveAspectRatio="none" aria-hidden="true"><path d={neck} /></svg>}
+        <article class="ms__tile" data-qa={`m-scale-tile-${i + 1}`} data-ref={`${xs[i]},4228,432,293`}>
+          <div class="ms__icon" data-qa={`m-scale-icon-${i + 1}`} data-ref={`${xs[i] + 32},4260,72,72`}><RDotGlyph name={t.icon} size={42} /></div>
+          <div class="ms__text" data-ms-fade>
+            <h5 class="display ms__h5" data-qa={`m-scale-h5-${i + 1}`} data-ref={`${xs[i] + 32},4404,368,27`}>{t.title}</h5>
+            <p class="ms__p">{t.body}</p>
+          </div>
+        </article>
+      </>
+    ))}
+  </div>
+</section>
+
+<style>
+  .ms { box-sizing: border-box; height: 909px; padding: 200px 56px 0; display: flex; flex-direction: column; align-items: center; overflow: hidden; }
+  .ms__title { width: 640px; max-width: 100%; font-size: var(--text-heading-2xl); line-height: 88px; text-align: center; white-space: nowrap; color: var(--color-obsidian); flex: none; }
+  .ms__btn { margin-top: var(--spacing-40); min-width: 221px; padding: var(--spacing-12); flex: none; }
+  .ms__tiles { margin-top: var(--spacing-80); width: 100%; max-width: 1328px; height: 293px; display: flex; align-items: center; flex: none; }
+  .ms__tile { flex: 1 1 0; min-width: 0; height: 293px; box-sizing: border-box; padding: var(--spacing-32); border-radius: var(--radius-3xl-2); background: var(--color-limestone); }
+  .ms__icon { width: 72px; height: 72px; border-radius: var(--radius-small); background: var(--color-obsidian); display: grid; place-items: center; }
+  .ms__text { margin-top: 72px; }
+  .ms__h5 { font-size: 27px; line-height: 27px; letter-spacing: 0.54px; white-space: nowrap; color: var(--color-obsidian); }
+  .ms__p { margin: var(--spacing-16) 0 0; max-width: 368px; font: 500 14px/21px var(--font-body); color: var(--color-obsidian); }
+  .ms__neck { flex: none; width: 16px; overflow: visible; fill: var(--color-limestone); }
+
+  @media (max-width: 1000px) {
+    .ms { height: auto; padding: 96px 20px 96px; }
+    .ms__title { font-size: clamp(36px, 10vw, 80px); line-height: 1.1; white-space: normal; }
+    .ms__tiles { margin-top: var(--spacing-56); flex-direction: column; height: auto; gap: 14px; align-items: stretch; }
+    .ms__tile { flex: none; height: auto; padding: var(--spacing-24); }
+    .ms__text { margin-top: var(--spacing-40); }
+    .ms__h5 { white-space: normal; }
+    .ms__neck { display: none; }
+  }
+</style>
+
+<script>
+  import { gsap, EASE, reduced } from '../../scripts/motion.ts';
+  const row = document.querySelector<HTMLElement>('[data-ms-tiles]');
+  if (row && !reduced) {
+    // Inferred (home-page convention): row from opacity 0 / scale 0.9, then tile text fades up with stagger.
+    const fades = row.querySelectorAll('[data-ms-fade]');
+    gsap.set(row, { opacity: 0, scale: 0.9 }); gsap.set(fades, { opacity: 0, y: 16 });
+    gsap.timeline({ scrollTrigger: { trigger: row, start: 'top 88%', once: true } })
+      .to(row, { opacity: 1, scale: 1, duration: 0.7, ease: EASE })
+      .to(fades, { opacity: 1, y: 0, duration: 0.5, ease: EASE, stagger: 0.06 }, 0.3);
+  }
+</script>

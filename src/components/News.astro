@@ -1,0 +1,198 @@
+---
+// News carousel. Geometry from REFERENCE.md "News" (section 0,4967,1440,983) and reference/ref-y5020.jpg.
+// NOTE: the measured card rect (379×401 at 56,5265, image 351×197 at +14) is the card at Framer's
+// pre-appear scale(0.9). The screenshot shows the resting card: 422×445.5 at 56,5243, 16px padding,
+// image 390×219, gap 16 → the same 438px step. The resting geometry is what is built and tagged here.
+import Icon from './Icon.astro';
+import { news, site } from '../data/copy';
+import { images } from '../data/images';
+
+const SETS = 4; // copies of the post list; set index 1 is the "real" one, the rest are aria-hidden clones
+const posts = news.posts;
+const slides = Array.from({ length: SETS }, (_, s) => posts.map((p, i) => ({ ...p, i, s, real: s === 1, img: images[p.image] }))).flat();
+const href = `${site.base}/blog`;
+---
+<section class="nw" data-qa="news" data-ref="0,4967,1440,983" aria-labelledby="nw-heading" data-nw>
+  <div class="nw-head" data-qa="news-heading" data-ref="56,5067,1384,96">
+    <h2 id="nw-heading" class="display nw-h2" data-reveal="chars">{news.title}</h2>
+    <div class="nw-ctrl" data-qa="news-controls" data-ref="1277,5095,107,56" role="group" aria-label={`${news.title} carousel controls`}>
+      <button type="button" class="nw-btn" data-nw-prev aria-label="Previous posts"><Icon name="PlayLeft" size={24} /></button>
+      <span class="nw-div" aria-hidden="true"></span>
+      <button type="button" class="nw-btn" data-nw-next aria-label="Next posts"><Icon name="Play" size={24} /></button>
+    </div>
+  </div>
+
+  <div class="nw-viewport" data-nw-viewport>
+    <ul class="nw-track" data-nw-track data-count={posts.length}>
+      {slides.map((p) => (
+        <li class="nw-slide" aria-hidden={p.real ? undefined : 'true'} data-nw-slide data-i={p.i} data-s={p.s}>
+          <a
+            class="nw-card" href={href} draggable="false" tabindex={p.real ? undefined : -1}
+            data-qa={p.real && p.i === 0 ? 'news-card-first' : undefined} data-ref={p.real && p.i === 0 ? '56,5243,422,446' : undefined}
+          >
+            <span class="nw-img" data-qa={p.real && p.i === 0 ? 'news-card-image' : undefined} data-ref={p.real && p.i === 0 ? '72,5259,390,219' : undefined}>
+              {p.img?.url && (
+                <img src={p.img.url} alt={p.real ? p.img.alt : ''} width="780" height="438" loading="lazy" decoding="async" draggable="false" data-nw-img />
+              )}
+              <span class="nw-halftone" aria-hidden="true"></span>
+            </span>
+            <span class="nw-text">
+              <span class="nw-tag" data-qa={p.real && p.i === 0 ? 'news-card-tag' : undefined} data-ref={p.real && p.i === 0 ? '88,5509,31,25' : undefined}>{p.tag}</span>
+              <span class="display nw-title" data-qa={p.real && p.i === 0 ? 'news-card-title' : undefined} data-ref={p.real && p.i === 0 ? '88,5549,358,62' : undefined}>{p.title}</span>
+              <span class="nw-date">{p.date && <time>{p.date}</time>}</span>
+            </span>
+          </a>
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>
+
+<style>
+  .nw {
+    --nw-card: 422px; --nw-gap: var(--spacing-16);
+    --nw-pad: max(56px, calc((100vw - 1440px) / 2 + 56px));
+    box-sizing: border-box; height: 983px; padding: 100px 0 200px var(--nw-pad); overflow-x: clip;
+  }
+  .nw-head { display: flex; justify-content: space-between; align-items: flex-start; height: 96px; padding-right: var(--nw-pad); margin-bottom: 80px; }
+  .nw-h2 { font-size: 80px; line-height: 96px; }
+
+  .nw-ctrl {
+    box-sizing: border-box; flex: none; display: flex; align-items: center; justify-content: space-between; width: 107px; height: 56px;
+    margin-top: 28px; padding: 0 4.5px; border: 1.5px dotted var(--color-obsidian); border-radius: var(--radius-full-2);
+  }
+  .nw-btn {
+    display: grid; place-items: center; width: 40px; height: 40px; padding: 0; border: 0; border-radius: var(--radius-full-2);
+    background: transparent; color: var(--color-obsidian); cursor: pointer; transition: background-color .25s ease, color .25s ease;
+  }
+  .nw-btn:hover { background: var(--color-obsidian); color: var(--color-limestone); }
+  .nw-btn:focus-visible, .nw-card:focus-visible { outline: 2px solid var(--color-obsidian); outline-offset: 2px; }
+  .nw-div { width: 0; height: 28px; border-left: 1.5px dotted var(--color-obsidian); }
+
+  .nw-viewport { height: 507px; touch-action: pan-y; cursor: grab; user-select: none; -webkit-user-select: none; }
+  .nw-viewport.is-dragging { cursor: grabbing; }
+  .nw-track { display: flex; gap: var(--nw-gap); width: max-content; margin: 0; padding: 0; list-style: none; will-change: transform; }
+  .nw-slide { flex: none; width: var(--nw-card); }
+
+  .nw-card { box-sizing: border-box; display: block; padding: var(--spacing-16); border-radius: var(--radius-3xl-3); background: var(--color-limestone); color: var(--color-obsidian); -webkit-user-drag: none; }
+  /* Ember duotone: grayscale + contrast photo multiplied over Ember, obsidian halftone on top. Solid Ember when no photo. */
+  .nw-img { position: relative; display: block; aspect-ratio: 390 / 219; border-radius: var(--radius-3xl); background: var(--color-ember); overflow: hidden; isolation: isolate; }
+  .nw-img img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; filter: grayscale(1) contrast(1.35) brightness(1.1); mix-blend-mode: multiply; transition: transform .6s cubic-bezier(.22,1,.36,1); pointer-events: none; }
+  .nw-card:hover .nw-img img { transform: scale(1.04); }
+  .nw-halftone {
+    position: absolute; inset: 0; pointer-events: none; opacity: .5;
+    background-image: radial-gradient(circle, var(--color-obsidian) 0 34%, transparent 38%); background-size: 6px 6px;
+    -webkit-mask-image: linear-gradient(115deg, #000 0%, transparent 42%, transparent 62%, #000 100%);
+    mask-image: linear-gradient(115deg, #000 0%, transparent 42%, transparent 62%, #000 100%);
+  }
+  .nw-text { display: flex; flex-direction: column; align-items: flex-start; padding: 31px var(--spacing-16) var(--spacing-16); }
+  .nw-tag { padding: var(--spacing-4) var(--spacing-8); border-radius: var(--radius-full-2); background: var(--color-sulfur); font-size: 14px; line-height: 16.8px; }
+  .nw-title {
+    margin-top: 15px; width: 100%; height: 62.4px; font-size: 26px; line-height: 31.2px;
+    display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; line-clamp: 2; overflow: hidden;
+  }
+  .nw-date { display: block; margin-top: 21px; min-height: 24.8px; font-size: 16px; line-height: 24.8px; }
+
+  @media (max-width: 640px) {
+    .nw { --nw-card: 300px; --nw-pad: 20px; height: auto; padding-top: 64px; padding-bottom: 96px; }
+    .nw-head { height: auto; align-items: center; margin-bottom: 40px; }
+    .nw-h2 { font-size: 56px; line-height: 64px; }
+    .nw-ctrl { margin-top: 0; }
+    .nw-viewport { height: auto; }
+    .nw-text { padding: 24px var(--spacing-8) var(--spacing-8); }
+    .nw-title { font-size: 26px; }
+  }
+</style>
+
+<script>
+  import { gsap, EASE, reduced } from '../scripts/motion';
+
+  const root = document.querySelector<HTMLElement>('[data-nw]');
+  if (root) {
+    const viewport = root.querySelector<HTMLElement>('[data-nw-viewport]')!;
+    const track = root.querySelector<HTMLElement>('[data-nw-track]')!;
+    const slides = [...track.querySelectorAll<HTMLElement>('[data-nw-slide]')];
+    const count = Number(track.dataset.count);
+    const state = { pos: 0 }; // px scrolled from "real post 0 at the left padding edge"; unbounded, wrapped on render
+    let step = 438; let setW = step * count;
+
+    const measure = () => { step = slides[1].offsetLeft - slides[0].offsetLeft; setW = step * count; render(); };
+    const render = () => {
+      const w = ((state.pos % setW) + setW) % setW;
+      track.style.transform = `translate3d(${-(setW + w)}px,0,0)`;
+      root.dataset.index = String(Math.round(w / step) % count); // which real post sits first (for tests / styling)
+    };
+    const go = (target: number, dur = 0.6) => gsap.to(state, { pos: target, duration: reduced ? 0 : dur, ease: EASE, overwrite: true, onUpdate: render });
+    const snapped = () => Math.round(state.pos / step) * step;
+    // while a step tween is running, chain from its destination so rapid clicks add up
+    let dest = 0;
+    const stepBy = (d: number) => { dest = (gsap.isTweening(state) ? dest : snapped()) + d * step; go(dest); };
+
+    root.querySelector('[data-nw-prev]')!.addEventListener('click', () => stepBy(-1));
+    root.querySelector('[data-nw-next]')!.addEventListener('click', () => stepBy(1));
+
+    // Drag / swipe
+    let drag: null | { id: number; x: number; y: number; pos: number; moved: boolean; lastX: number; lastT: number; v: number } = null;
+    let suppressClick = false;
+    viewport.addEventListener('pointerdown', (e) => {
+      if (e.pointerType === 'mouse' && e.button !== 0) return;
+      gsap.killTweensOf(state);
+      drag = { id: e.pointerId, x: e.clientX, y: e.clientY, pos: state.pos, moved: false, lastX: e.clientX, lastT: e.timeStamp, v: 0 };
+    });
+    window.addEventListener('pointermove', (e) => {
+      if (!drag || e.pointerId !== drag.id) return;
+      const dx = e.clientX - drag.x;
+      if (!drag.moved) {
+        if (Math.abs(dx) < 6) return;
+        drag.moved = true; viewport.classList.add('is-dragging');
+        try { viewport.setPointerCapture(drag.id); } catch {}
+      }
+      const dt = e.timeStamp - drag.lastT;
+      if (dt > 0) { drag.v = (e.clientX - drag.lastX) / dt; drag.lastX = e.clientX; drag.lastT = e.timeStamp; }
+      state.pos = drag.pos - dx; render();
+    });
+    const end = (e: PointerEvent) => {
+      if (!drag || e.pointerId !== drag.id) return;
+      const d = drag; drag = null; viewport.classList.remove('is-dragging');
+      if (!d.moved) return;
+      suppressClick = true; setTimeout(() => { suppressClick = false; }, 0);
+      // settle on the nearest card, nudged one further in the fling direction
+      const fling = Math.abs(d.v) > 0.4 ? -Math.sign(d.v) * step * 0.5 : 0;
+      dest = Math.round((state.pos + fling) / step) * step; go(dest, 0.5);
+    };
+    window.addEventListener('pointerup', end); window.addEventListener('pointercancel', end);
+    viewport.addEventListener('click', (e) => { if (suppressClick) { e.preventDefault(); e.stopPropagation(); } }, true);
+    viewport.addEventListener('dragstart', (e) => e.preventDefault());
+
+    // Keyboard: bring a focused real card to the first slot; arrows on the controls/viewport step.
+    track.addEventListener('focusin', (e) => {
+      const li = (e.target as HTMLElement).closest<HTMLElement>('[data-nw-slide]'); if (!li || li.dataset.s !== '1') return;
+      viewport.scrollLeft = 0; root.scrollLeft = 0;
+      const i = Number(li.dataset.i); const base = Math.round(state.pos / setW) * setW;
+      const options = [base + i * step - setW, base + i * step, base + i * step + setW];
+      dest = options.reduce((a, b) => (Math.abs(b - state.pos) < Math.abs(a - state.pos) ? b : a)); go(dest);
+    });
+    root.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight') { e.preventDefault(); stepBy(1); } else if (e.key === 'ArrowLeft') { e.preventDefault(); stepBy(-1); }
+    });
+
+    // Photos that fail to load fall back to the solid Ember block.
+    root.querySelectorAll<HTMLImageElement>('[data-nw-img]').forEach((img) => {
+      const drop = () => img.remove();
+      if (img.complete && img.naturalWidth === 0 && img.currentSrc) drop(); else img.addEventListener('error', drop, { once: true });
+    });
+
+    measure();
+    window.addEventListener('resize', measure);
+
+    if (!reduced) {
+      // cards on screen at rest: the clone peeking on the left, then the real set and what follows it
+      const first = count - 1; // index within `slides` of the peeking clone (last post of set 0)
+      const cards = slides.slice(first, first + 6).map((s) => s.firstElementChild);
+      gsap.from(cards, {
+        y: 40, opacity: 0, duration: 0.7, ease: EASE, stagger: 0.08, clearProps: 'transform,opacity',
+        scrollTrigger: { trigger: viewport, start: 'top 85%', once: true },
+      });
+    }
+  }
+</script>

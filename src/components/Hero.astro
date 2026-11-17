@@ -1,0 +1,174 @@
+---
+// Hero: 1328×615 halftone media block (radius 40) with two canvas-coloured cut-outs (title top-left,
+// description bottom-right) joined to it by four concave 40px corners. Rects from REFERENCE.md "Hero".
+import { hero } from '../data/copy.ts';
+// Concave corner: canvas-coloured 40×40 square minus a quarter disc whose centre is the bottom-right corner.
+const corner = 'M0 0H40C17.909 0 0 17.909 0 40V0Z';
+---
+<section class="hero" data-hero data-qa="hero-section" data-ref="0,112,1440,615">
+  <div class="hero-inner">
+    <div class="hero-media" data-hero-media data-qa="hero-media" data-ref="56,112,1328,615">
+      <canvas class="hero-canvas" data-hero-canvas aria-hidden="true"></canvas>
+    </div>
+
+    <div class="hero-title-wrap" data-hero-title>
+      <div class="hero-title-box" data-qa="hero-title-box" data-ref="56,112,590,246">
+        <h1 class="display hero-h1" data-hero-h1 data-qa="hero-h1" data-ref="56,126,590,182">
+          {hero.lines.map((l) => <span class="hero-line">{l}</span>)}
+        </h1>
+      </div>
+      <svg class="hero-corner hero-corner-tr" data-qa="hero-corner-title-right" data-ref="645,112,40,40" width="40" height="40" viewBox="0 0 40 40" aria-hidden="true"><path d={corner} /></svg>
+      <svg class="hero-corner hero-corner-bl" data-qa="hero-corner-title-below" data-ref="56,356,40,40" width="40" height="40" viewBox="0 0 40 40" aria-hidden="true"><path d={corner} /></svg>
+    </div>
+
+    <div class="hero-desc-wrap" data-hero-desc>
+      <div class="hero-desc-box" data-qa="hero-desc-box" data-ref="845,540,539,187">
+        <p class="hero-p" data-hero-p data-qa="hero-paragraph" data-ref="885,580,499,54">{hero.sub}</p>
+        <div class="hero-btns" data-hero-btns>
+          <a class="btn btn-ember btn-lg hero-btn" href={hero.primary.href} data-qa="hero-btn-primary" data-ref="885,671,242,56">{hero.primary.label}</a>
+          <a class="btn btn-dotted btn-lg hero-btn" href={hero.secondary.href} data-qa="hero-btn-secondary" data-ref="1143,671,242,56">{hero.secondary.label}</a>
+        </div>
+      </div>
+      <svg class="hero-corner hero-corner-dl" data-qa="hero-corner-desc-left" data-ref="805,687,40,40" width="40" height="40" viewBox="0 0 40 40" aria-hidden="true"><path d={corner} /></svg>
+      <svg class="hero-corner hero-corner-da" data-qa="hero-corner-desc-above" data-ref="1344,504,40,40" width="40" height="40" viewBox="0 0 40 40" aria-hidden="true"><path d={corner} /></svg>
+    </div>
+  </div>
+  <noscript><style>.hero [data-hero-title], .hero [data-hero-desc] { visibility: visible !important; }</style></noscript>
+</section>
+
+<style>
+  .hero { width: 100%; max-width: 1440px; margin-inline: auto; padding-inline: var(--spacing-56); }
+  .hero-inner { position: relative; height: 615px; overflow: clip; }
+  .hero-media { position: absolute; inset: 0; border-radius: var(--radius-cards); overflow: hidden; background: var(--color-plasma-violet); }
+  .hero-canvas { width: 100%; height: 100%; }
+
+  .hero-title-wrap { position: absolute; top: 0; left: 0; }
+  .hero-title-box { width: 590px; height: 246px; padding: 14px 0 50px; background: var(--color-pumice); border-radius: 0 0 var(--radius-cards) 0; }
+  .hero-h1 { font-size: var(--text-heading-3xl); line-height: 91.2px; color: var(--color-obsidian); }
+  .hero-line { display: block; white-space: nowrap; }
+
+  .hero-desc-wrap { position: absolute; right: 0; bottom: 0; }
+  .hero-desc-box { width: 539px; height: 187px; padding: var(--spacing-40) 0 0 var(--spacing-40); background: var(--color-pumice); border-radius: var(--radius-cards) 0 0 0; overflow: hidden; }
+  .hero-p { margin: 0; min-height: 54px; font: 500 18px/27px var(--font-body); color: var(--color-obsidian); }
+  .hero-btns { display: flex; gap: var(--spacing-16); margin-top: 37px; }
+  .hero-btn { flex: 0 0 calc((100% - var(--spacing-16)) / 2); min-width: 0; padding-inline: var(--spacing-16); }
+
+  .hero-corner { position: absolute; fill: var(--color-pumice); pointer-events: none; }
+  .hero-corner-tr { left: 589px; top: 0; }
+  .hero-corner-bl { left: 0; top: 244px; }
+  .hero-corner-dl { right: 539px; bottom: 0; transform: rotate(180deg); }
+  .hero-corner-da { right: 0; bottom: 183px; transform: rotate(180deg); }
+
+  /* Hidden until the appear timeline takes over (no flash of the final state). */
+  @media (prefers-reduced-motion: no-preference) {
+    .hero-title-wrap, .hero-desc-wrap { visibility: hidden; }
+  }
+
+  /* Stacked layout: title, media, description as plain blocks. */
+  @media (max-width: 1023px) {
+    .hero { padding-inline: var(--spacing-16); }
+    .hero-inner { display: flex; flex-direction: column; gap: var(--spacing-24); height: auto; }
+    .hero-title-wrap, .hero-desc-wrap { position: static; }
+    .hero-title-wrap { order: 1; }
+    .hero-media { position: relative; inset: auto; order: 2; height: min(100vw, 480px); flex: none; }
+    .hero-desc-wrap { order: 3; }
+    .hero-title-box { width: auto; height: auto; padding: 0; background: transparent; border-radius: 0; }
+    .hero-h1 { font-size: min(96px, 16.5vw); line-height: 0.95; }
+    .hero-desc-box { width: auto; height: auto; padding: 0 0 var(--spacing-8); background: transparent; border-radius: 0; }
+    .hero-btns { margin-top: var(--spacing-24); flex-wrap: wrap; }
+    .hero-btn { flex: 1 1 200px; }
+    .hero-corner { display: none; }
+  }
+</style>
+
+<script>
+  import { gsap, splitChars, EASE, reduced } from '../scripts/motion.ts';
+
+  const root = document.querySelector<HTMLElement>('[data-hero]');
+  if (root) {
+    // ---------- Appear (REFERENCE.md: Framer "spring, bounce 0" -> power3.out) ----------
+    const title = root.querySelector<HTMLElement>('[data-hero-title]')!;
+    const desc = root.querySelector<HTMLElement>('[data-hero-desc]')!;
+    const h1 = root.querySelector<HTMLElement>('[data-hero-h1]')!;
+    const para = root.querySelector<HTMLElement>('[data-hero-p]')!;
+    const btns = root.querySelector<HTMLElement>('[data-hero-btns]')!;
+    const chars = splitChars(h1);
+    if (reduced) {
+      gsap.set([title, desc], { visibility: 'visible' });
+    } else {
+      gsap.set([title, desc], { visibility: 'visible' });
+      gsap.timeline({ defaults: { ease: EASE } })
+        .from(title, { x: -1000, duration: 0.7 }, 0.6)
+        .from(desc, { x: 1000, duration: 0.7 }, 0.6)
+        .from(chars, { yPercent: 40, opacity: 0, duration: 0.5, stagger: 0.018 }, 0.75)
+        .from(btns, { y: 52, duration: 0.4 }, 1.4)
+        .from(para, { opacity: 0, y: 32, duration: 0.3 }, 1.6);
+    }
+
+    // ---------- Looping halftone canvas ----------
+    const media = root.querySelector<HTMLElement>('[data-hero-media]')!;
+    const canvas = root.querySelector<HTMLCanvasElement>('[data-hero-canvas]')!;
+    const ctx = canvas.getContext('2d', { alpha: false })!;
+    const css = getComputedStyle(document.documentElement);
+    const EMBER = css.getPropertyValue('--color-ember').trim();
+    const VIOLET = css.getPropertyValue('--color-plasma-violet').trim();
+    const PITCH = 9;            // css px between dot centres
+    const LOOP = 24;            // seconds; every time term below is an integer multiple of 2π·phase
+    const TAU = Math.PI * 2;
+    let w = 0, h = 0, dpr = 1, cols = 0, rows = 0;
+    let ux = new Float32Array(0), vy = new Float32Array(0);
+
+    function resize() {
+      const r = media.getBoundingClientRect();
+      w = Math.max(1, Math.round(r.width)); h = Math.max(1, Math.round(r.height));
+      dpr = Math.min(window.devicePixelRatio || 1, 2);
+      canvas.width = Math.round(w * dpr); canvas.height = Math.round(h * dpr);
+      cols = Math.ceil(w / PITCH) + 1; rows = Math.ceil(h / PITCH) + 1;
+      // field coordinates are in units of the block height so the pattern scale is size independent
+      ux = new Float32Array(cols); vy = new Float32Array(rows);
+      for (let i = 0; i < cols; i++) ux[i] = (i * PITCH) / 615;
+      for (let j = 0; j < rows; j++) vy[j] = (j * PITCH) / 615;
+      draw(state.phase);
+    }
+
+    function draw(phase: number) {
+      if (!w) return;
+      const a = phase * TAU;
+      const s1 = Math.sin(a), c1 = Math.cos(a), s2 = Math.sin(2 * a), c2 = Math.cos(2 * a);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx.fillStyle = VIOLET; ctx.fillRect(0, 0, w, h);
+      ctx.fillStyle = EMBER; ctx.beginPath();
+      for (let j = 0; j < rows; j++) {
+        const v = vy[j], y = j * PITCH;
+        for (let i = 0; i < cols; i++) {
+          const u = ux[i];
+          // slowly drifting field: three broad waves whose phases travel on closed paths
+          let f = Math.sin(u * 3.4 + v * 2.1 + 1.2 * s1 + a)
+                + Math.sin(u * -2.3 + v * 4.4 + 1.4 * c1 + 0.7 * s2 + 2.0)
+                + 0.8 * Math.sin((u + 0.3 * c2) * 5.6 - (v + 0.25 * s1) * 3.1 - a + 4.0)
+                + 0.5 * Math.sin(u * 1.3 - v * 6.2 + 2 * a + 1.0);
+          f = f / 3.3 * 0.75 + 0.5;                     // -> roughly 0..1, with headroom so plateaus form
+          f = f < 0 ? 0 : f > 1 ? 1 : f;
+          const r = PITCH * (0.14 + 0.57 * f);           // 1.3px specks -> 6.4px (cells merged into solid ember)
+          const x = i * PITCH;
+          if (r > 6.36) ctx.rect(x - PITCH / 2, y - PITCH / 2, PITCH, PITCH);
+          else { ctx.moveTo(x + r, y); ctx.arc(x, y, r, 0, TAU); }
+        }
+      }
+      ctx.fill();
+    }
+
+    const state = { phase: 0 };
+    let frame = 0;
+    const loop = gsap.to(state, {
+      phase: 1, duration: LOOP, ease: 'none', repeat: -1, paused: true,
+      onUpdate: () => { if ((frame++ & 1) === 0) draw(state.phase); },   // ~30fps
+    });
+    let onScreen = false;
+    const sync = () => { if (onScreen && !document.hidden && !reduced) loop.play(); else loop.pause(); };
+    new ResizeObserver(resize).observe(media);
+    new IntersectionObserver((entries) => { onScreen = entries[0].isIntersecting; sync(); }, { threshold: 0 }).observe(media);
+    document.addEventListener('visibilitychange', sync);
+    resize();
+  }
+</script>

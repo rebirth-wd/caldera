@@ -1,0 +1,31 @@
+/* Order is deliberate: Tailwind, then the governing style docs (theme.css = Tailwind v4 @theme
+   tokens, variables.css = :root custom properties), then project base rules. */
+@import "tailwindcss";
+@import "./theme.css";
+@import "./variables.css";
+@import "@fontsource/dm-sans/500.css";
+@import "@fontsource-variable/archivo/wdth.css";
+@import "@fontsource/anton/400.css";
+
+:root {
+  /* Display stack: licensed PP Neue Corp Compact first (drop files in /public/fonts to enable),
+     then a width-tuned Archivo that reproduces the reference glyph widths, then DESIGN.md's Anton. */
+  --font-display: 'PP Neue Corp Compact Ultrabold', 'PP Neue Corp Compact', 'Archivo Variable', 'Anton', ui-sans-serif, system-ui, sans-serif;
+  --font-body: var(--font-dm-sans);
+  --btn-text-on-ember: #f7f6f2; /* measured on reference; DESIGN.md says Obsidian — see DECISIONS.md */
+}
+html { background: var(--color-pumice); }
+body { margin: 0; background: var(--color-pumice); color: var(--color-obsidian); font-family: var(--font-body); font-weight: 500; font-size: 16px; line-height: 1.55; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+.display { font-family: var(--font-display); font-weight: 900; font-stretch: var(--display-wdth, 81%); font-variation-settings: 'wdth' var(--display-wdth-n, 81); font-feature-settings: "ss06", "ss10"; margin: 0; }
+a { color: inherit; text-decoration: none; }
+img, video, canvas, svg { display: block; }
+.container-x { width: 100%; max-width: 1440px; margin-inline: auto; padding-inline: 56px; }
+/* Buttons (DESIGN.md: pill, 12/24, DM Sans 500 16px, no shadow) */
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 48px; padding: 12px 24px; border-radius: 800px; font: 500 16px/20px var(--font-body); white-space: nowrap; cursor: pointer; transition: background-color .25s ease, color .25s ease; }
+.btn-ember { background: var(--color-ember); color: var(--btn-text-on-ember); }
+.btn-ember:hover { background: var(--color-obsidian); color: var(--color-limestone); }
+.btn-dotted { background: transparent; color: var(--color-obsidian); border: 1.5px dotted var(--color-obsidian); }
+.btn-dotted:hover { background: var(--color-obsidian); color: var(--color-limestone); }
+.btn-lg { height: 56px; font-size: 18px; }
+.dots-bg { background-image: radial-gradient(circle, rgba(7,6,7,.07) 0 38%, transparent 40%); background-size: 19px 19px; }
+@media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }

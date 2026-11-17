@@ -1,0 +1,54 @@
+---
+// Reserve: centred 900×530 text block (80px heading, 6-line paragraph, Obsidian pill) flanked by two graphics that
+// slide in from the sides while the block scales 0.7 -> 1 / opacity 0.4 -> 1 as the section scrolls into view.
+// data-ref = rects as captured at scroll 0 (block at scale 0.7, art translated off-screen), which is what the QA
+// script measures; resting rects are in reference/era/REFERENCE.md "Reserve".
+import { era } from '../../data/era.ts';
+import EArt from './EArt.astro';
+const r = era.reserve;
+---
+<section class="eres" data-eres data-qa="era-reserve" data-ref="0,2173,1440,800">
+  <div class="eres__art eres__art--l" data-eres-left data-qa="era-reserve-art-left" data-ref="-442,2540,401,320"><EArt w={401} h={320} variant="a" /></div>
+  <div class="eres__box" data-eres-box data-qa="era-reserve-box" data-ref="405,2407,630,371">
+    <h2 class="display eres__title" data-qa="era-reserve-title" data-ref="461,2463,518,62">{r.title}</h2>
+    <p class="eres__p" data-qa="era-reserve-body" data-ref="461,2547,518,113">{r.body}</p>
+    <a class="eres__btn" href={r.button.href} data-qa="era-reserve-button" data-ref="672,2683,97,39">{r.button.label}</a>
+  </div>
+  <div class="eres__art eres__art--r" data-eres-right data-qa="era-reserve-art-right" data-ref="1520,2540,522,320"><EArt w={522} h={320} variant="b" /></div>
+</section>
+
+<style>
+  .eres { position: relative; box-sizing: border-box; height: 800px; overflow: clip; }
+  /* 200px top / 160px bottom padding around a 530px block: it is centred on y = 420 and overflows the padding box */
+  .eres__box { position: absolute; left: 50%; top: 155px; width: 900px; height: 530px; margin-left: -450px; box-sizing: border-box; padding: var(--spacing-80); border-radius: var(--radius-3xl);
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: var(--spacing-32); will-change: transform; }
+  .eres__title { width: 100%; font-size: var(--text-heading-2xl); line-height: 88px; text-align: center; white-space: nowrap; color: var(--color-obsidian); }
+  .eres__p { margin: 0; min-height: 162px; font: 500 18px/27px var(--font-body); text-align: center; color: var(--color-obsidian); }
+  .eres__btn { display: inline-flex; align-items: center; justify-content: center; padding: 17px var(--spacing-24); border-radius: 200px; background: var(--color-obsidian); color: var(--color-limestone); font: 500 18px/21.6px var(--font-body); white-space: nowrap; transition: background-color .25s ease; }
+  .eres__btn:hover, .eres__btn:focus-visible { background: var(--color-ember); }
+  .eres__art { position: absolute; top: 367px; will-change: transform; pointer-events: none; }
+  .eres__art--l { left: calc(50% - 831px); }
+  .eres__art--r { left: calc(50% + 440px); }
+
+  @media (max-width: 1100px) {
+    .eres { height: auto; padding: var(--spacing-80) var(--spacing-20); }
+    .eres__box { position: relative; left: auto; top: auto; margin: 0 auto; width: 100%; max-width: 900px; height: auto; padding: 0; }
+    .eres__title { width: 100%; font-size: clamp(40px, 9vw, 80px); line-height: 1.1; white-space: normal; }
+    .eres__p { min-height: 0; }
+    .eres__art { display: none; }
+  }
+</style>
+
+<script>
+  import { gsap, reduced } from '../../scripts/motion.ts';
+  const sec = document.querySelector<HTMLElement>('[data-eres]');
+  if (sec && !reduced) {
+    const mm = gsap.matchMedia();
+    mm.add('(min-width: 1101px)', () => {
+      const st = { trigger: sec, start: 'top bottom', end: 'center center', scrub: 0.4 };
+      gsap.fromTo(sec.querySelector('[data-eres-box]'), { scale: 0.7, opacity: 0.4 }, { scale: 1, opacity: 1, ease: 'none', scrollTrigger: st });
+      gsap.fromTo(sec.querySelector('[data-eres-left]'), { x: -331 }, { x: 0, ease: 'none', scrollTrigger: st });
+      gsap.fromTo(sec.querySelector('[data-eres-right]'), { x: 360 }, { x: 0, ease: 'none', scrollTrigger: st });
+    });
+  }
+</script>

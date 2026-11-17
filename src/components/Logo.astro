@@ -1,0 +1,9 @@
+---
+// Neutral placeholder wordmark (152×32 like the reference logo slot). `color` sets mark + text.
+const { color = 'var(--color-ember)', class: cls = '' } = Astro.props;
+---
+<svg class={cls} width="152" height="32" viewBox="0 0 152 32" fill="none" role="img" aria-label="Lorem" style={`color:${color}`}>
+  <path d="M4 26c0-9 6.5-16 15-16s15 7 15 16H26c0-4.4-3.1-8-7-8s-7 3.6-7 8H4Z" fill="currentColor"/>
+  <circle cx="19" cy="6" r="3" fill="currentColor"/>
+  <text x="44" y="25" font-family="'Archivo Variable', 'DM Sans', system-ui, sans-serif" font-weight="650" font-size="27" letter-spacing="-0.6" fill="currentColor">lorem</text>
+</svg>

@@ -1,0 +1,80 @@
+---
+// "Bridging" section: centred heading, Limestone network diagram, fused violet text card + violet wordmark grid.
+// Rects from reference/metalayer/REFERENCE.md "Bridging" (section 0,656,1440,1423).
+import { mBridging as d } from '../../data/metalayer.ts';
+import MGraphic from './MGraphic.astro';
+const neck = 'M-1 33H0A8 8 0 0 0 16 33H17V108H16A8 8 0 0 0 0 108H-1Z';
+const cells = [[725, 1618], [943, 1618], [725, 1740], [943, 1740]];
+---
+<section class="mb" data-qa="m-bridging" data-ref="0,656,1440,1423">
+  <h2 class="display mb__title" data-reveal="chars" data-qa="m-bridging-h2" data-ref="283,824,874,176">
+    {d.lines.map((l) => <span class="mb__line">{l} </span>)}
+  </h2>
+
+  <div class="mb__net" data-mb-in data-qa="m-bridging-net" data-ref="251,1080,938,464"><MGraphic kind="net" /></div>
+
+  <div class="mb__cards" data-mb-in data-qa="m-bridging-cards" data-ref="251,1560,938,319">
+    <article class="mb__text" data-qa="m-bridging-text-card" data-ref="251,1560,407,319">
+      <h5 class="display mb__h5" data-mb-fade data-qa="m-bridging-h5" data-ref="291,1600,210,64">{d.card.lines.map((l) => <span class="mb__line">{l} </span>)}</h5>
+      <p class="mb__p" data-mb-fade data-qa="m-bridging-p" data-ref="291,1704,327,135">{d.card.body}</p>
+    </article>
+    <svg class="mb__neck" width="16" height="141" viewBox="0 0 16 141" preserveAspectRatio="none" aria-hidden="true" data-qa="m-bridging-neck" data-ref="658,1649,16,141"><path d={neck} /></svg>
+    <div class="mb__grid" data-qa="m-bridging-grid-card" data-ref="673,1560,516,319">
+      {d.marks.map((m, i) => (
+        <div class="mb__cell" style={`left:${cells[i][0] - 673.4}px;top:${cells[i][1] - 1560}px`} data-qa={`m-bridging-cell-${i + 1}`} data-ref={`${cells[i][0]},${cells[i][1]},195,82`}>
+          <span class="display mb__mark" data-mb-fade>{m}</span>
+        </div>
+      ))}
+      <span class="mb__div mb__div--v" style="top:58px" aria-hidden="true"></span>
+      <span class="mb__div mb__div--v" style="top:180px" aria-hidden="true"></span>
+      <span class="mb__div mb__div--h" aria-hidden="true"></span>
+    </div>
+  </div>
+</section>
+
+<style>
+  .mb { box-sizing: border-box; height: 1423px; padding: 168px 56px 0; display: flex; flex-direction: column; align-items: center; overflow: hidden; }
+  .mb__title { width: 874px; max-width: 100%; font-size: var(--text-heading-2xl); line-height: 88px; text-align: center; color: var(--color-obsidian); flex: none; }
+  .mb__line { display: block; white-space: nowrap; }
+  .mb__net { position: relative; margin-top: var(--spacing-80); width: min(938px, 100%); height: 464px; border-radius: var(--radius-cards); background: var(--color-limestone); overflow: hidden; flex: none; }
+
+  .mb__cards { margin-top: var(--spacing-16); width: min(938px, 100%); height: 319px; display: flex; align-items: center; flex: none; }
+  .mb__text { flex: 0 0 407px; height: 319px; box-sizing: border-box; padding: var(--spacing-40); border-radius: var(--radius-cards); background: var(--color-plasma-violet); color: var(--color-limestone); display: flex; flex-direction: column; gap: var(--spacing-40); }
+  .mb__h5 { width: 210px; font-size: var(--text-heading); line-height: 32px; letter-spacing: var(--tracking-heading); }
+  .mb__p { margin: 0; font: 500 18px/27px var(--font-body); }
+  .mb__neck { flex: none; width: 15.4px; overflow: visible; fill: var(--color-plasma-violet); }
+  .mb__grid { position: relative; flex: 1 1 0; min-width: 0; height: 319px; border-radius: var(--radius-cards); background: var(--color-plasma-violet); color: var(--color-limestone); }
+  .mb__cell { position: absolute; width: 195px; height: 82px; display: grid; place-items: center; }
+  .mb__mark { font-size: 36px; line-height: 36px; letter-spacing: 0.02em; }
+  .mb__div { position: absolute; box-sizing: border-box; }
+  .mb__div--v { left: calc(50% - 1px); height: 82px; border-left: 1.5px dotted var(--color-limestone); }
+  .mb__div--h { left: 40px; right: 40px; top: 159px; border-top: 1.5px dotted var(--color-limestone); }
+
+  @media (max-width: 1100px) {
+    .mb { height: auto; padding: 96px 20px 96px; }
+    .mb__title { font-size: clamp(34px, 8.6vw, 80px); line-height: 1.1; }
+    .mb__net { margin-top: var(--spacing-48); height: auto; aspect-ratio: 938 / 464; }
+    .mb__cards { flex-direction: column; height: auto; gap: var(--spacing-16); align-items: stretch; }
+    .mb__text { flex: none; height: auto; }
+    .mb__neck { display: none; }
+    .mb__grid { flex: none; height: auto; display: grid; grid-template-columns: 1fr 1fr; padding: var(--spacing-24); gap: var(--spacing-16); }
+    .mb__cell { position: static; width: auto; }
+    .mb__div { display: none; }
+    .mb__mark { font-size: 28px; }
+  }
+</style>
+
+<script>
+  import { gsap, EASE, reduced } from '../../scripts/motion.ts';
+  const root = document.querySelector<HTMLElement>('[data-qa="m-bridging"]');
+  if (root && !reduced) {
+    // Inferred (home-page convention): blocks from opacity 0 / scale 0.9, then their contents fade up.
+    root.querySelectorAll<HTMLElement>('[data-mb-in]').forEach((el) => {
+      const fades = el.querySelectorAll('[data-mb-fade]');
+      gsap.set(el, { opacity: 0, scale: 0.9 }); gsap.set(fades, { opacity: 0, y: 16 });
+      gsap.timeline({ scrollTrigger: { trigger: el, start: 'top 88%', once: true } })
+        .to(el, { opacity: 1, scale: 1, duration: 0.7, ease: EASE })
+        .to(fades, { opacity: 1, y: 0, duration: 0.5, ease: EASE, stagger: 0.06 }, 0.3);
+    });
+  }
+</script>

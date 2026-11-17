@@ -1,0 +1,59 @@
+---
+// Metalayer hero: media block (582x544) + Limestone info card (730x544). Rects from reference/metalayer/REFERENCE.md "Hero".
+import { mHero, mImages } from '../../data/metalayer.ts';
+import MMedia from './MMedia.astro';
+---
+<section class="mh" data-qa="m-hero" data-ref="0,112,1440,544">
+  <div class="mh__row">
+    <div class="mh__media"><MMedia kind="hub" img={mImages.hero} qa="m-hero-media" ref="56,112,582,544" /></div>
+    <div class="mh__card" data-qa="m-hero-card" data-ref="654,112,730,544">
+      <div class="mh__top" data-mh-in>
+        <span class="mh__tag" data-qa="m-hero-tag" data-ref="702,160,102,34">{mHero.tag}</span>
+        <h1 class="display mh__h1" data-mh-h1 data-qa="m-hero-h1" data-ref="702,226,634,132">
+          {mHero.lines.map((l) => <span class="mh__line">{l} </span>)}
+        </h1>
+      </div>
+      <div class="mh__bottom" data-mh-in>
+        <p class="mh__p" data-qa="m-hero-p" data-ref="702,470,532,50">{mHero.sub}</p>
+        <a class="btn btn-lg mh__btn" href={mHero.button.href} data-qa="m-hero-btn" data-ref="702,552,215,56">{mHero.button.label}</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .mh { width: 100%; max-width: 1440px; margin-inline: auto; padding-inline: var(--spacing-56); }
+  .mh__row { display: flex; gap: var(--spacing-16); height: 544px; }
+  .mh__media { flex: 0 0 calc((100% - 16px) * 582 / 1312); min-width: 0; display: flex; }
+  .mh__media > :global(.mmedia) { flex: 1; }
+  .mh__card { flex: 1 1 0; min-width: 0; box-sizing: border-box; padding: var(--spacing-48); border-radius: var(--radius-cards); background: var(--color-limestone); display: flex; flex-direction: column; justify-content: space-between; align-items: flex-start; }
+  .mh__top { display: flex; flex-direction: column; align-items: flex-start; gap: var(--spacing-32); width: 100%; }
+  .mh__bottom { display: flex; flex-direction: column; align-items: flex-start; gap: var(--spacing-32); max-width: 100%; }
+  .mh__tag { display: inline-flex; align-items: center; justify-content: center; box-sizing: border-box; min-width: 102px; height: 34px; padding: 7px 14px; border-radius: var(--radius-3xl); background: var(--color-sulfur); font: 500 16px/20px var(--font-body); color: var(--color-obsidian); }
+  .mh__h1 { width: 100%; font-size: 70px; line-height: 65.8px; color: var(--color-obsidian); }
+  .mh__line { display: block; white-space: nowrap; }
+  .mh__p { margin: 0; width: 532px; max-width: 100%; min-height: 49.6px; font: 500 16px/24.8px var(--font-body); color: var(--color-obsidian); }
+  .mh__btn { min-width: 215px; padding: var(--spacing-12) var(--spacing-32); background: var(--color-obsidian); color: var(--color-limestone); }
+  .mh__btn:hover { background: var(--color-ember); }
+
+  @media (max-width: 1023px) {
+    .mh { padding-inline: var(--spacing-16); }
+    .mh__row { flex-direction: column-reverse; height: auto; }
+    .mh__media { flex: none; height: min(90vw, 480px); }
+    .mh__card { flex: none; padding: var(--spacing-32) var(--spacing-24); gap: var(--spacing-48); }
+    .mh__h1 { font-size: clamp(40px, 12vw, 70px); line-height: .94; }
+    .mh__line { white-space: normal; }
+  }
+</style>
+
+<script>
+  import { gsap, splitChars, EASE, reduced } from '../../scripts/motion.ts';
+  const root = document.querySelector<HTMLElement>('[data-qa="m-hero"]');
+  if (root && !reduced) {
+    // Inferred (motion was not sampled on this page): same appear as the sibling inner-page hero.
+    const chars = splitChars(root.querySelector<HTMLElement>('[data-mh-h1]')!);
+    gsap.from(root.querySelectorAll('[data-mh-in]'), { opacity: 0, y: -32, duration: 0.4, ease: EASE, stagger: 0.12, delay: 0.1 });
+    gsap.from(chars, { yPercent: 40, opacity: 0, duration: 0.5, ease: EASE, stagger: 0.018, delay: 0.2 });
+    gsap.from(root.querySelector('[data-mmedia]'), { opacity: 0, scale: 0.96, duration: 0.7, ease: EASE });
+  }
+</script>

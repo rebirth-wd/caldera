@@ -1,0 +1,72 @@
+---
+// "Connect" section: three-line centred heading over the dot field, two CTA boxes (violet / ember) with a media base.
+// Rects from reference/rollups/REFERENCE.md "Community" (section 0,5594,1440,1271).
+import { rConnect as d, rImages } from '../../data/rollups.ts';
+import DotField from '../DotField.astro';
+import RMedia from './RMedia.astro';
+const boxes = [
+  { x: 137, tone: 'var(--color-plasma-violet)', kind: 'machine', bw: 165 },
+  { x: 728, tone: 'var(--color-ember)', kind: 'network', bw: 223 },
+].map((b, i) => ({ ...b, ...d.boxes[i] }));
+---
+<section class="rc" data-qa="r-connect" data-ref="0,5594,1440,1271">
+  <DotField />
+  <div class="rc__inner">
+    <h2 class="display rc__title" data-reveal="chars" data-qa="r-connect-h2" data-ref="157,5754,1127,264">
+      {d.lines.map((l) => <span class="rc__line">{l} </span>)}
+    </h2>
+    <div class="rc__grid" data-qa="r-connect-grid" data-ref="137,6098,1166,667">
+      {boxes.map((b, i) => (
+        <article class="rc__box" style={`--tone:${b.tone}`} data-rc-box data-qa={`r-connect-box-${i + 1}`} data-ref={`${b.x},6098,575,667`}>
+          <div class="rc__info">
+            <h4 class="display rc__h4" data-qa={`r-connect-h4-${i + 1}`} data-ref={`${b.x + 40},6138,495,120`}>
+              {b.lines.map((l) => <span class="rc__h4line">{l} </span>)}
+            </h4>
+            <a class="btn rc__btn" style={`width:${b.bw}px`} href={b.button.href} data-qa={`r-connect-btn-${i + 1}`} data-ref={`${b.x + 40},6298,${b.bw},48`}>{b.button.label}</a>
+          </div>
+          <div class="rc__media"><RMedia kind={b.kind} tone={b.tone} img={rImages[b.image]} radius={false} qa={`r-connect-media-${i + 1}`} ref={`${b.x},6378,575,387`} /></div>
+        </article>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .rc { position: relative; box-sizing: border-box; height: 1270.6px; padding: 160px 56px 0; overflow: hidden; }
+  .rc__inner { position: relative; z-index: 1; max-width: 1328px; margin-inline: auto; display: flex; flex-direction: column; align-items: center; }
+  .rc__title { width: 1127px; max-width: 100%; font-size: var(--text-heading-2xl); line-height: 88px; text-align: center; color: var(--color-obsidian); }
+  .rc__line { display: block; white-space: nowrap; }
+  .rc__grid { margin-top: var(--spacing-80); width: min(1166px, 100%); display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-16); }
+  .rc__box { box-sizing: border-box; height: 666.6px; padding-top: var(--spacing-40); border-radius: var(--radius-cards); background: var(--tone); overflow: hidden; display: flex; flex-direction: column; gap: var(--spacing-32); min-width: 0; }
+  .rc__info { padding-inline: var(--spacing-40); display: flex; flex-direction: column; align-items: flex-start; gap: var(--spacing-40); flex: none; }
+  .rc__h4 { width: 100%; font-size: 40px; line-height: 40px; color: var(--color-limestone); }
+  .rc__h4line { display: block; white-space: nowrap; }
+  .rc__btn { padding-inline: var(--spacing-12); background: var(--color-limestone); color: var(--color-obsidian); }
+  .rc__btn:hover { background: var(--color-obsidian); color: var(--color-limestone); }
+  .rc__media { flex: 1 1 0; min-height: 0; display: flex; }
+  .rc__media > :global(.rmedia) { flex: 1; }
+
+  @media (max-width: 1277px) {
+    .rc { height: auto; padding-bottom: 100px; }
+    .rc__title { font-size: clamp(34px, 6.2vw, 80px); line-height: 1.1; }
+    .rc__h4 { font-size: clamp(26px, 3.1vw, 40px); line-height: 1; }
+  }
+  @media (max-width: 900px) {
+    .rc { padding: 96px 20px 64px; }
+    .rc__line, .rc__h4line { white-space: normal; display: inline; }
+    .rc__grid { margin-top: var(--spacing-56); grid-template-columns: 1fr; }
+    .rc__box { height: auto; padding-top: var(--spacing-32); }
+    .rc__info { padding-inline: var(--spacing-24); gap: var(--spacing-24); }
+    .rc__h4 { font-size: 32px; line-height: 32px; }
+    .rc__btn { width: auto !important; padding-inline: var(--spacing-24); }
+    .rc__media { flex: none; aspect-ratio: 575 / 387; }
+  }
+</style>
+
+<script>
+  import { gsap, EASE, reduced } from '../../scripts/motion.ts';
+  if (!reduced) {
+    const boxes = document.querySelectorAll<HTMLElement>('[data-rc-box]');
+    if (boxes.length) gsap.from(boxes, { y: 40, opacity: 0, duration: 0.9, ease: EASE, stagger: 0.12, scrollTrigger: { trigger: boxes[0], start: 'top 88%', once: true } });
+  }
+</script>

@@ -1,0 +1,63 @@
+---
+// Blog post template: back link, cover, tag/date, h1, rich-text body. Body structure mirrors the reference post
+// (see reference/blog-post/REFERENCE.md); copy is Lorem Ipsum from src/data/blog.ts.
+import BlogMedia from './BlogMedia.astro';
+import { catLabel, postBody, postUi, type Post } from '../../data/blog';
+import { site } from '../../data/copy';
+interface Props { post: Post }
+const { post } = Astro.props;
+const esc = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;');
+const rich = (s: string) => esc(s).replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+---
+<article class="pa" data-qa="post-article">
+  <div class="container-x pa__inner">
+    <a class="btn btn-dotted pa__back" href={`${site.base}/blog`} data-qa="post-back">
+      <svg width="12" height="17" viewBox="0 0 12 17" aria-hidden="true"><path d="M12 0v17L0 8.5z" fill="currentColor" /></svg>
+      <span>{postUi.back}</span>
+    </a>
+    <div class="pa__cover" data-qa="post-cover" data-pa-cover><BlogMedia image={post.image} tone={post.tone} eager w={1600} h={900} /></div>
+    <header class="pa__head" data-qa="post-head">
+      <p class="pa__meta"><span class="pa__tag">{catLabel[post.cat]}</span><time class="pa__date">{post.date}</time></p>
+      <h1 class="display pa__h1" data-reveal="chars" data-qa="post-title">{post.title}</h1>
+    </header>
+    <div class="pa__body" data-qa="post-body">
+      {postBody.map((b) => b.t === 'h2' ? <h2 class="display">{b.text}</h2>
+        : b.t === 'ul' ? <ul>{b.items.map((i) => <li set:html={rich(i)} />)}</ul>
+        : <p set:html={rich(b.text)} />)}
+    </div>
+  </div>
+</article>
+<style>
+  .pa { padding: 0 0 120px; }
+  .pa__inner { display: flex; flex-direction: column; align-items: center; }
+  .pa__back { align-self: flex-start; padding: var(--spacing-12) var(--spacing-20); gap: var(--spacing-18); margin-bottom: var(--spacing-24); }
+  .pa__back svg { transition: transform .3s cubic-bezier(.22, 1, .36, 1); }
+  .pa__back:hover svg { transform: translateX(-5px); }
+  .pa__cover { position: relative; width: 100%; aspect-ratio: 16 / 9; border-radius: var(--radius-3xl-3); overflow: hidden; }
+  .pa__head { box-sizing: border-box; width: 100%; max-width: 880px; padding-top: var(--spacing-64); }
+  .pa__meta { display: flex; align-items: center; gap: var(--spacing-16); margin: 0 0 var(--spacing-24); font-size: 16px; line-height: 24.8px; }
+  .pa__tag { padding: 7px var(--spacing-12); border-radius: var(--radius-3xl); background: var(--color-sulfur); font-size: 14px; line-height: 21px; }
+  .pa__h1 { font-size: 64px; line-height: 64px; color: var(--color-obsidian); }
+  .pa__body { width: 100%; max-width: 880px; padding-top: var(--spacing-48); font-size: 18px; line-height: 27px; color: var(--color-obsidian); }
+  .pa__body :global(p) { margin: 0 0 var(--spacing-24); }
+  .pa__body :global(h2) { margin: var(--spacing-56) 0 var(--spacing-24); font-size: 40px; line-height: 40px; }
+  .pa__body :global(ul) { margin: 0 0 var(--spacing-24); padding: 0; list-style: none; display: grid; gap: var(--spacing-8); }
+  .pa__body :global(li) { position: relative; padding-left: var(--spacing-24); }
+  .pa__body :global(li)::before { content: ''; position: absolute; left: 4px; top: 10px; width: 7px; height: 7px; border-radius: 50%; background: var(--color-ember); }
+  .pa__body :global(strong) { font-weight: 700; }
+  .pa__body :global(> :last-child) { margin-bottom: 0; }
+  @media (max-width: 640px) {
+    .pa { padding-bottom: 64px; }
+    .pa__inner { padding-inline: 20px; }
+    .pa__cover { border-radius: var(--radius-3xl-2); }
+    .pa__head { padding-top: var(--spacing-32); }
+    .pa__h1 { font-size: 40px; line-height: 42px; }
+    .pa__body { padding-top: var(--spacing-32); font-size: 16px; line-height: 24.8px; }
+    .pa__body :global(h2) { font-size: 30px; line-height: 32px; margin-top: var(--spacing-40); }
+  }
+</style>
+<script>
+  import { gsap, EASE, reduced } from '../../scripts/motion';
+  const cover = document.querySelector('[data-pa-cover]');
+  if (cover && !reduced) gsap.from(cover, { opacity: 0, y: 32, duration: 0.7, ease: EASE, clearProps: 'transform,opacity' });
+</script>

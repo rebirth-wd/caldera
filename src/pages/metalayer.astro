@@ -1,0 +1,18 @@
+---
+import Base from '../layouts/Base.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import MHero from '../components/metalayer/MHero.astro';
+import MBridging from '../components/metalayer/MBridging.astro';
+import MFeatures from '../components/metalayer/MFeatures.astro';
+import MScale from '../components/metalayer/MScale.astro';
+import MEnables from '../components/metalayer/MEnables.astro';
+---
+<Base title="Voluptate — Lorem Ipsum">
+  <Header />
+  <main>
+    <div aria-hidden="true" style="height:112px"></div>
+    <MHero /><MBridging /><MFeatures /><MScale /><MEnables />
+  </main>
+  <Footer />
+</Base>

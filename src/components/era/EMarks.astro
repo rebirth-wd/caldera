@@ -1,0 +1,52 @@
+---
+// Marks: centred 80px heading over the drifting dot field and a 2×3 grid of Limestone cards 445×152.
+// The reference shows third-party logos linking out; here each card is an inert Lorem wordmark pill (href="#").
+// Rects: reference/era/REFERENCE.md "Community".
+import { era } from '../../data/era.ts';
+import DotField from '../DotField.astro';
+const { title, items } = era.marks;
+const X = [267, 728], Y = [4152, 4320, 4488];   // 1440×723 QA viewport (779 capture: +112)
+---
+<section class="emk" data-qa="era-marks" data-ref="0,3808,1440,948">
+  <DotField />
+  <div class="emk__inner">
+    <h2 class="display emk__title" data-reveal="chars" data-qa="era-marks-heading" data-ref="361,3968,719,88">{title}</h2>
+    <div class="emk__grid" data-emk-grid data-qa="era-marks-grid" data-ref="251,4136,938,520">
+      {items.map((m, i) => (
+        <a class="emk__card" href={m.href} data-emk-card data-qa={`era-mark-${i + 1}`} data-ref={`${X[i % 2]},${Y[Math.floor(i / 2)]},445,152`}>
+          <span class="display emk__mark">{m.label}</span>
+        </a>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .emk { position: relative; box-sizing: border-box; height: 948px; padding: 160px var(--spacing-56) 100px; overflow: hidden; }
+  .emk__inner { position: relative; z-index: 1; max-width: 1328px; margin-inline: auto; display: flex; flex-direction: column; align-items: center; gap: var(--spacing-80); }
+  .emk__title { width: 719px; max-width: 100%; font-size: var(--text-heading-2xl); line-height: 88px; text-align: center; color: var(--color-obsidian); }
+  .emk__grid { box-sizing: border-box; width: 938px; max-width: 100%; padding: var(--spacing-16); display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-16); }
+  .emk__card { box-sizing: border-box; height: 152px; padding: var(--spacing-40) var(--spacing-24); border-radius: var(--radius-cards); background: var(--color-limestone); display: grid; place-items: center; transition: background-color .25s ease, color .25s ease; color: var(--color-obsidian); }
+  .emk__card:hover, .emk__card:focus-visible { background: var(--color-obsidian); color: var(--color-limestone); outline: none; }
+  .emk__mark { font-size: 48px; line-height: 72px; letter-spacing: 0.02em; white-space: nowrap; }
+
+  @media (max-width: 1023px) {
+    .emk { height: auto; padding: var(--spacing-80) var(--spacing-20); }
+    .emk__inner { gap: var(--spacing-40); }
+    .emk__title { width: auto; font-size: clamp(44px, 11vw, 80px); line-height: 1.1; }
+    .emk__grid { padding: 0; }
+  }
+  @media (max-width: 600px) {
+    .emk__grid { grid-template-columns: 1fr; }
+    .emk__card { height: 112px; padding: var(--spacing-24); }
+    .emk__mark { font-size: 36px; line-height: 48px; }
+  }
+</style>
+
+<script>
+  import { gsap, EASE, reduced } from '../../scripts/motion.ts';
+  const grid = document.querySelector<HTMLElement>('[data-emk-grid]');
+  if (grid && !reduced) {
+    gsap.from(grid.querySelectorAll('[data-emk-card]'), { opacity: 0, y: 32, duration: 0.6, ease: EASE, stagger: 0.06, scrollTrigger: { trigger: grid, start: 'top 88%', once: true } });
+  }
+</script>

@@ -1,0 +1,18 @@
+---
+import Base from '../layouts/Base.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import RHero from '../components/rollups/RHero.astro';
+import REverything from '../components/rollups/REverything.astro';
+import RFeatures from '../components/rollups/RFeatures.astro';
+import RInfra from '../components/rollups/RInfra.astro';
+import RConnect from '../components/rollups/RConnect.astro';
+---
+<Base title="Laborum — Lorem Ipsum">
+  <Header />
+  <main>
+    <div aria-hidden="true" style="height:112px"></div>
+    <RHero /><REverything /><RFeatures /><RInfra /><RConnect />
+  </main>
+  <Footer />
+</Base>

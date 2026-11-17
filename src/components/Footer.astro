@@ -1,0 +1,96 @@
+---
+// Footer: obsidian CTA card, seven ember contact circles, Limestone links box.
+import DotField from './DotField.astro';
+import Icon from './Icon.astro';
+import Logo from './Logo.astro';
+import { footer, site } from '../data/copy.ts';
+const hrefFor = (name: string) => name === 'Phone' ? site.tel : name === 'Blog' ? `${site.base}/blog` : "#";
+const labelFor = (name: string) => name;
+const last = footer.circles.length - 1;
+---
+<footer class="foot" data-qa="footer" data-ref="0,7989,1440,397">
+  <DotField />
+  <div class="foot__inner">
+    <div class="foot-cta" data-qa="footer-cta" data-ref="56,8045,664,285">
+      <Logo />
+      <div class="foot-cta__bottom">
+        <h4 class="display foot-cta__title" data-qa="footer-cta-heading">{footer.heading}</h4>
+        <a class="btn btn-ember" href={footer.button.href}>{footer.button.label}</a>
+      </div>
+    </div>
+
+    <div class="foot__side">
+      <ul class="foot-circles" data-foot-circles>
+        {footer.circles.map((name, i) => (
+          <li>
+            <a class="foot-circle" href={hrefFor(name)} aria-label={labelFor(name)}
+              data-qa={i === 0 ? 'footer-circle-first' : i === last ? 'footer-circle-last' : undefined}
+              data-ref={i === 0 ? '736,8045,79,79' : i === last ? '1305,8045,79,79' : undefined}>
+              <span class="foot-circle__face" data-foot-circle><Icon name={name} size={39} /></span>
+            </a>
+          </li>
+        ))}
+      </ul>
+
+      <div class="foot-box" data-qa="footer-links-box" data-ref="736,8140,648,190">
+        <nav aria-label="Footer">
+          <ul class="foot-links">
+            {footer.links.map((l) => <li><a class="foot-link" href={l.href}>{l.label}</a></li>)}
+          </ul>
+        </nav>
+        <hr class="foot-rule" />
+        <p class="foot-copy" data-qa="footer-copyright" data-ref="768,8269,584,21">{footer.copyright}</p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .foot { position: relative; height: 397px; padding: var(--spacing-56); overflow: hidden; }
+  .foot__inner { position: relative; z-index: 1; max-width: 1328px; height: 100%; margin-inline: auto; display: flex; gap: var(--spacing-16); }
+
+  .foot-cta { flex: none; width: 664px; display: flex; flex-direction: column; justify-content: space-between; align-items: flex-start; padding: var(--card-padding); background: var(--color-obsidian); border-radius: var(--radius-cards); }
+  .foot-cta__bottom { display: flex; flex-direction: column; align-items: flex-start; gap: var(--spacing-24); }
+  .foot-cta__title { max-width: 491px; font-size: 40px; line-height: 40px; text-wrap: balance; color: var(--color-limestone); }
+
+  .foot__side { flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; gap: var(--spacing-16); }
+  .foot-circles { display: flex; justify-content: space-between; margin: 0; padding: 0; list-style: none; }
+  .foot-circle { display: block; width: 79px; height: 79px; border-radius: var(--radius-pills); }
+  .foot-circle__face { display: grid; place-items: center; width: 100%; height: 100%; border-radius: var(--radius-pills); background: var(--color-ember); color: var(--color-limestone); }
+  .foot-circle:focus-visible { outline: 2px solid var(--color-obsidian); outline-offset: 3px; }
+
+  .foot-box { flex: 1 1 0; display: flex; flex-direction: column; justify-content: space-between; padding: var(--spacing-40) var(--spacing-32); background: var(--color-limestone); border-radius: var(--radius-cards); }
+  .foot-links { display: flex; flex-wrap: wrap; gap: 0 22px; margin: 0; padding: 0; list-style: none; }
+  .foot-link { position: relative; display: block; font-size: var(--text-body); line-height: 24.8px; white-space: nowrap; }
+  .foot-link::after { content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 1px; background: currentColor; opacity: 0; transition: opacity .25s ease; }
+  .foot-link:hover::after, .foot-link:focus-visible::after { opacity: 1; }
+  .foot-rule { width: 100%; height: 0; margin: 0; border: 0; border-top: 1.5px dotted var(--color-obsidian); }
+  .foot-copy { margin: 0; font-size: var(--text-body-sm); line-height: 21px; }
+
+  @media (max-width: 1023px) {
+    .foot { height: auto; padding: var(--spacing-40) var(--spacing-20); }
+    .foot__inner { flex-direction: column; height: auto; }
+    .foot-cta { width: 100%; min-height: 285px; gap: var(--spacing-56); padding: var(--spacing-32); }
+    .foot-cta__title { font-size: 36px; line-height: 1; }
+    .foot-circles { flex-wrap: wrap; justify-content: flex-start; gap: var(--spacing-12); }
+    .foot-circle { width: 64px; height: 64px; }
+    .foot-circle :global(svg) { width: 32px; height: 32px; }
+    .foot-box { gap: var(--spacing-24); padding: var(--spacing-32) var(--spacing-24); }
+    .foot-links { gap: var(--spacing-8) 22px; }
+  }
+</style>
+
+<script>
+  import { gsap, EASE, reduced } from '../scripts/motion.ts';
+  const row = document.querySelector<HTMLElement>('[data-foot-circles]');
+  if (row && !reduced) {
+    const faces = [...row.querySelectorAll<HTMLElement>('[data-foot-circle]')];
+    gsap.from(faces, { opacity: 0, scale: 0, duration: 0.6, ease: 'back.out(1.7)', stagger: 0.06, scrollTrigger: { trigger: row, start: 'top 98%', once: true } });
+    faces.forEach((face) => {
+      const link = face.parentElement!;
+      const to = (scale: number) => gsap.to(face, { scale, duration: 0.3, ease: EASE, overwrite: 'auto' });
+      link.addEventListener('pointerenter', () => to(1.12)); link.addEventListener('pointerleave', () => to(1));
+      link.addEventListener('focus', () => to(1.12)); link.addEventListener('blur', () => to(1));
+    });
+  }
+</script>

@@ -1,0 +1,77 @@
+---
+// "Infrastructure" section: centred heading + paragraph over a fused 2x2 grid of Limestone tiles.
+// Rects from reference/rollups/REFERENCE.md "Scale" (section 0,4230,1440,1364).
+import { rInfra as d } from '../../data/rollups.ts';
+import RDotGlyph from './RDotGlyph.astro';
+const pos = [[320, 4792.5], [727.7, 4792.5], [320, 5100.9], [727.7, 5100.9]];
+const neck = 'M-1 33H0A8 8 0 0 0 16 33H17V108H16A8 8 0 0 0 0 108H-1Z';
+---
+<section class="ri" data-qa="r-infra" data-ref="0,4230,1440,1364">
+  <div class="ri__head" data-qa="r-infra-head" data-ref="400,4430,640,282">
+    <h2 class="display ri__title" data-reveal="chars" data-qa="r-infra-h2" data-ref="400,4430,640,176">
+      {d.lines.map((l) => <span class="ri__line">{l} </span>)}
+    </h2>
+    <p class="ri__sub" data-qa="r-infra-sub" data-ref="463,4638,514,74">{d.sub}</p>
+  </div>
+
+  <div class="ri__tiles" data-ri-tiles data-qa="r-infra-tiles" data-ref="320,4793,800,601">
+    {d.tiles.map((t, i) => (
+      <article class="ri__tile" data-qa={`r-infra-tile-${i + 1}`} data-ref={`${Math.round(pos[i][0])},${Math.round(pos[i][1])},392,293`}>
+        <div class="ri__icon"><RDotGlyph name={t.icon} size={42} /></div>
+        <div class="ri__text" data-ri-fade>
+          <h5 class="display ri__h5">{t.title}</h5>
+          <p class="ri__p">{t.body}</p>
+        </div>
+      </article>
+    ))}
+    {[0, 1].map((r) => <svg class="ri__neck ri__neck--h" style={`top:${76 + r * 308.4}px`} width="16" height="141" viewBox="0 0 16 141" preserveAspectRatio="none" aria-hidden="true"><path d={neck} /></svg>)}
+    {[0, 1].map((c) => <svg class="ri__neck ri__neck--v" style={`left:${196.15 + c * 407.7}px`} width="16" height="141" viewBox="0 0 16 141" preserveAspectRatio="none" aria-hidden="true"><path d={neck} /></svg>)}
+  </div>
+</section>
+
+<style>
+  .ri { box-sizing: border-box; height: 1363.8px; padding: 200px 56px 0; display: flex; flex-direction: column; align-items: center; overflow: hidden; }
+  .ri__head { width: 640px; max-width: 100%; display: flex; flex-direction: column; align-items: center; gap: var(--spacing-32); flex: none; }
+  .ri__title { align-self: stretch; font-size: var(--text-heading-2xl); line-height: 88px; text-align: center; color: var(--color-obsidian); }
+  .ri__line { display: block; white-space: nowrap; }
+  .ri__sub { margin: 0; width: 514px; max-width: 100%; min-height: 74.4px; font: 500 16px/24.8px var(--font-body); text-align: center; color: var(--color-obsidian); }
+
+  .ri__tiles { position: relative; margin-top: var(--spacing-80); width: min(800px, 100%); display: grid; grid-template-columns: 1fr 1fr; gap: 15.4px; flex: none; }
+  .ri__tile { box-sizing: border-box; height: 293px; padding: var(--spacing-32); border-radius: var(--radius-3xl-2); background: var(--color-limestone); min-width: 0; }
+  .ri__icon { width: 72px; height: 72px; border-radius: var(--radius-small); background: var(--color-obsidian); display: grid; place-items: center; }
+  .ri__text { margin-top: 72px; }
+  .ri__h5 { font-size: 27px; line-height: 27px; letter-spacing: 0.54px; white-space: nowrap; color: var(--color-obsidian); }
+  .ri__p { margin: var(--spacing-16) 0 0; font: 500 14px/21px var(--font-body); color: var(--color-obsidian); }
+  .ri__neck { position: absolute; width: 15.4px; height: 141px; overflow: visible; fill: var(--color-limestone); pointer-events: none; }
+  .ri__neck--h { left: calc(50% - 7.7px); }
+  /* same neck turned a quarter turn to bridge the gap between the two rows */
+  .ri__neck--v { top: 293px; transform-origin: 0 0; transform: translate(70.5px, 15.4px) rotate(-90deg) translateY(-141px); }
+
+  @media (max-width: 900px) {
+    .ri { height: auto; padding: 96px 20px 80px; }
+    .ri__title { align-self: stretch; font-size: clamp(36px, 10vw, 80px); line-height: 1.1; }
+    .ri__line { white-space: normal; }
+    .ri__sub { min-height: 0; }
+    .ri__tiles { margin-top: var(--spacing-56); }
+  }
+  @media (max-width: 700px) {
+    .ri__tiles { grid-template-columns: 1fr; gap: 14px; }
+    .ri__tile { height: auto; padding: var(--spacing-24); }
+    .ri__text { margin-top: var(--spacing-40); }
+    .ri__h5 { white-space: normal; }
+    .ri__neck { display: none; }
+  }
+</style>
+
+<script>
+  import { gsap, EASE, reduced } from '../../scripts/motion.ts';
+  const grid = document.querySelector<HTMLElement>('[data-ri-tiles]');
+  if (grid && !reduced) {
+    const fades = grid.querySelectorAll('[data-ri-fade]');
+    gsap.set(grid, { opacity: 0, scale: 0.9 });
+    gsap.set(fades, { opacity: 0, y: 16 });
+    gsap.timeline({ scrollTrigger: { trigger: grid, start: 'top 88%', once: true } })
+      .to(grid, { opacity: 1, scale: 1, duration: 0.7, ease: EASE })
+      .to(fades, { opacity: 1, y: 0, duration: 0.5, ease: EASE, stagger: 0.06 }, 0.3);
+  }
+</script>

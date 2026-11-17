@@ -1,0 +1,207 @@
+---
+// Use cases / tabs. Geometry from REFERENCE.md "Use cases / tabs" (section 0,3842,1440,1125).
+import { useCases } from '../data/copy';
+
+// 9×9 dot-matrix glyphs, one per tab (drawn here; no third-party artwork).
+const glyphs: string[][] = [
+  // shield with a tick — maintenance
+  ['#########', '#.......#', '#......##', '#.....#.#', '#.#..#..#', '.#.##..#.', '.#.....#.', '..#...#..', '...###...'],
+  // page with text lines — content
+  ['######...', '#.....#..', '#.###..#.', '#......#.', '#.####.#.', '#......#.', '#.####.#.', '#......#.', '########.'],
+  // funnel — leads
+  ['#########', '.#.....#.', '..#...#..', '...#.#...', '...#.#...', '...#.#...', '...#.#...', '...##....', '...#.....'],
+];
+const dots = (rows: string[]) => rows.flatMap((r, y) => [...r].map((c, x) => (c === '#' ? { x, y } : null)).filter(Boolean)) as { x: number; y: number }[];
+// Reference rects: active card, then the two closed pills (uniform 10px gap; measured gaps are 12 and 8).
+const tabRefs = ['137,4302,420,384', '137,4698,420,80', '137,4786,420,80'];
+const tabQa = ['uc-tab-active', 'uc-tab-closed-1', 'uc-tab-closed-2'];
+---
+<section class="uc" data-qa="usecases" data-ref="0,3842,1440,1125" aria-labelledby="uc-heading">
+  <div class="uc-head" data-qa="uc-heading" data-ref="400,4042,640,180">
+    <h2 id="uc-heading" class="display uc-h2" data-reveal="chars">
+      {useCases.lines.map((l) => <span class="uc-line">{l}</span>)}
+    </h2>
+  </div>
+
+  <div class="uc-content" data-uc>
+    <div class="uc-nav" role="tablist" aria-labelledby="uc-heading" aria-orientation="vertical">
+      {useCases.tabs.map((t, i) => (
+        <button
+          type="button" role="tab" id={`uc-tab-${i}`} aria-controls={`uc-pane-${i}`}
+          aria-selected={i === 0 ? 'true' : 'false'} tabindex={i === 0 ? 0 : -1}
+          class:list={['uc-tab', { 'is-open': i === 0 }]} data-uc-tab data-qa={tabQa[i]} data-ref={tabRefs[i]}
+        >
+          <span class="uc-icon" aria-hidden="true">
+            <svg width="36" height="36" viewBox="0 0 36 36">
+              {dots(glyphs[i]).map((d) => <rect x={d.x * 4 + 0.5} y={d.y * 4 + 0.5} width="3.2" height="3.2" rx="0.8" fill="currentColor" />)}
+            </svg>
+          </span>
+          <span class="display uc-title">{t.title}</span>
+          <span class="uc-tagline">{t.tagline}</span>
+        </button>
+      ))}
+    </div>
+
+    <div class="uc-panel" data-uc-panel data-qa="uc-panel" data-ref="573,4302,730,565">
+      {useCases.tabs.map((t, i) => (
+        <div class:list={['uc-pane', { 'is-active': i === 0 }]} role="tabpanel" id={`uc-pane-${i}`} aria-labelledby={`uc-tab-${i}`} tabindex={i === 0 ? 0 : -1} data-uc-pane>
+          <p class="uc-body" data-qa={i === 0 ? 'uc-panel-text' : undefined} data-ref={i === 0 ? '621,4350,634,225' : undefined}>{t.body}</p>
+          <div class="uc-built">
+            <p class="uc-built-label">{useCases.builtLabel}</p>
+            <ul class="uc-marks">
+              {t.built.map((b) => <li class="display uc-mark">{b}</li>)}
+            </ul>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .uc { box-sizing: border-box; height: 1125px; padding: 200px 56px 100px; }
+  .uc-head { width: 640px; max-width: 100%; min-height: 180px; margin: 0 auto 80px; text-align: center; }
+  .uc-h2 { font-size: 80px; line-height: 88px; }
+  .uc-line { display: block; }
+
+  .uc-content { display: flex; gap: var(--spacing-16); width: 1166px; max-width: 100%; height: 565px; margin: 0 auto; }
+  .uc-nav { flex: none; width: 420px; display: flex; flex-direction: column; gap: var(--spacing-10); }
+
+  .uc-tab {
+    position: relative; flex: none; display: block; box-sizing: border-box; width: 100%; height: 80px; padding: 0; margin: 0;
+    border: 1.5px dotted var(--color-obsidian); border-radius: var(--radius-3xl-3); background-color: transparent;
+    color: var(--color-obsidian); text-align: left; font: inherit; overflow: hidden; cursor: pointer;
+  }
+  .uc-tab.is-open { height: 384px; border-color: transparent; border-radius: var(--radius-3xl-2); background-color: var(--color-limestone); cursor: default; }
+  .uc-tab:focus-visible { outline: 2px solid var(--color-obsidian); outline-offset: 3px; }
+  /* children are positioned from the padding box, i.e. 1.5px inside the border: 38.5 + 1.5 = 40 */
+  .uc-icon {
+    position: absolute; left: 38.5px; top: 38.5px; width: 71px; height: 71px; display: grid; place-items: center;
+    border-radius: var(--radius-2xl); background: var(--color-obsidian); color: var(--color-chalk); opacity: 0;
+  }
+  .uc-title { position: absolute; left: 38.5px; top: 22.5px; font-size: 32px; line-height: 1; letter-spacing: 0.64px; white-space: nowrap; }
+  .uc-tagline { position: absolute; left: 38.5px; right: 38.5px; top: 292.5px; font-size: 16px; line-height: 24.8px; opacity: 0; }
+  .uc-tab.is-open .uc-icon, .uc-tab.is-open .uc-tagline { opacity: 1; }
+  .uc-tab.is-open .uc-title { top: 230.5px; font-size: 48px; letter-spacing: 0px; }
+
+  .uc-panel {
+    flex: 1 1 0; min-width: 0; box-sizing: border-box; display: grid; padding: var(--spacing-48);
+    border-radius: var(--radius-3xl-3); background: var(--color-plasma-violet); color: var(--color-limestone);
+  }
+  .uc-pane { grid-area: 1 / 1; display: flex; flex-direction: column; justify-content: space-between; min-width: 0; opacity: 0; visibility: hidden; }
+  .uc-pane.is-active { opacity: 1; visibility: visible; }
+  .uc-pane:focus-visible { outline: 2px solid var(--color-limestone); outline-offset: 8px; }
+  .uc-body { margin: 0; font-size: 30px; line-height: 45px; }
+  .uc-built { padding-top: var(--spacing-32); }
+  .uc-built-label { margin: 0; font-size: 16px; line-height: 24.8px; }
+  .uc-marks { display: flex; flex-wrap: wrap; align-items: center; gap: var(--spacing-20); height: 32px; margin: 32px 0 0; padding: 0; list-style: none; }
+  .uc-mark { font-size: 20px; line-height: 32px; letter-spacing: 0.4px; text-transform: uppercase; color: var(--color-limestone); white-space: nowrap; }
+
+  @media (max-width: 1100px) {
+    .uc { height: auto; padding: 120px 56px 80px; }
+    .uc-content { flex-direction: column; height: auto; }
+    .uc-nav { width: 100%; }
+    .uc-panel { flex: none; min-height: 420px; }
+  }
+  @media (max-width: 640px) {
+    .uc { padding: 96px 20px 64px; }
+    .uc-head { min-height: 0; margin-bottom: 48px; }
+    .uc-h2 { font-size: 48px; line-height: 52px; }
+    .uc-panel { padding: var(--spacing-32); min-height: 0; }
+    .uc-body { font-size: 22px; line-height: 33px; }
+    .uc-marks { height: auto; row-gap: 0; }
+  }
+</style>
+
+<script>
+  import { gsap, ScrollTrigger, EASE, reduced } from '../scripts/motion';
+
+  const root = document.querySelector<HTMLElement>('[data-uc]');
+  if (root) {
+    const tabs = [...root.querySelectorAll<HTMLElement>('[data-uc-tab]')];
+    const panes = [...root.querySelectorAll<HTMLElement>('[data-uc-pane]')];
+    const panel = root.querySelector<HTMLElement>('[data-uc-panel]')!;
+    const limestone = getComputedStyle(document.documentElement).getPropertyValue('--color-limestone').trim();
+    const obsidian = getComputedStyle(document.documentElement).getPropertyValue('--color-obsidian').trim();
+    const DUR = reduced ? 0 : 0.5;
+    const AUTO = 5;
+    let current = 0;
+    let tl: gsap.core.Timeline | null = null;
+
+    const parts = (t: HTMLElement) => ({
+      icon: t.querySelector('.uc-icon'), title: t.querySelector('.uc-title'), tagline: t.querySelector('.uc-tagline'),
+    });
+
+    function activate(next: number, focus = false) {
+      next = (next + tabs.length) % tabs.length;
+      if (focus) tabs[next].focus();
+      if (next === current) return;
+      const prev = current; current = next;
+      tabs.forEach((t, i) => { t.setAttribute('aria-selected', String(i === next)); t.tabIndex = i === next ? 0 : -1; });
+      panes.forEach((p, i) => { p.tabIndex = i === next ? 0 : -1; });
+
+      tl?.kill();
+      tl = gsap.timeline({
+        defaults: { duration: DUR, ease: EASE, overwrite: 'auto' },
+        onComplete: () => {
+          // hand the resting state back to CSS so it survives resizes
+          tabs.forEach((t, i) => {
+            t.classList.toggle('is-open', i === next);
+            const p = parts(t);
+            gsap.set(t, { clearProps: 'height,borderRadius,backgroundColor,borderColor' });
+            gsap.set([p.icon, p.tagline], { clearProps: 'opacity' });
+            gsap.set(p.title, { clearProps: 'top,fontSize,letterSpacing' });
+          });
+          panes.forEach((p, i) => { p.classList.toggle('is-active', i === next); gsap.set(p, { clearProps: 'opacity,visibility,transform' }); });
+        },
+      });
+      tabs.forEach((t, i) => {
+        const open = i === next; const p = parts(t);
+        tl!.to(t, { height: open ? 384 : 80, borderRadius: open ? 32 : 40, backgroundColor: open ? limestone : 'rgba(247,246,242,0)', borderColor: open ? 'rgba(7,6,7,0)' : obsidian }, 0)
+          .to(p.title, { top: open ? 230.5 : 22.5, fontSize: open ? 48 : 32, letterSpacing: open ? 0 : 0.64 }, 0)
+          .to([p.icon, p.tagline], { opacity: open ? 1 : 0, duration: open ? DUR : DUR * 0.5, delay: open ? DUR * 0.25 : 0 }, 0);
+      });
+      panes.forEach((p, i) => {
+        if (i === next) tl!.fromTo(p, { autoAlpha: 0, y: 16 }, { autoAlpha: 1, y: 0 }, DUR * 0.2);
+        else tl!.to(p, { autoAlpha: 0, y: i === prev ? -16 : 0, duration: DUR * 0.6 }, 0);
+      });
+      if (reduced) tl.progress(1);
+      schedule();
+    }
+
+    // Auto-advance, paused on hover / focus / off-screen / hidden tab.
+    const hold = { hover: false, focus: false, off: true };
+    const timer = gsap.delayedCall(AUTO, () => activate(current + 1)).pause();
+    function schedule() {
+      if (reduced || hold.hover || hold.focus || hold.off || document.hidden) timer.pause();
+      else timer.restart(true);
+    }
+    root.addEventListener('pointerenter', () => { hold.hover = true; schedule(); });
+    root.addEventListener('pointerleave', () => { hold.hover = false; schedule(); });
+    root.addEventListener('focusin', () => { hold.focus = true; schedule(); });
+    root.addEventListener('focusout', (e) => { if (!root.contains(e.relatedTarget as Node)) { hold.focus = false; schedule(); } });
+    document.addEventListener('visibilitychange', schedule);
+    new IntersectionObserver(([e]) => { hold.off = !e.isIntersecting; schedule(); }, { threshold: 0.35 }).observe(root);
+
+    tabs.forEach((t, i) => {
+      t.addEventListener('click', () => activate(i));
+      t.addEventListener('keydown', (e) => {
+        const k = e.key; let to = -1;
+        if (k === 'ArrowDown' || k === 'ArrowRight') to = i + 1;
+        else if (k === 'ArrowUp' || k === 'ArrowLeft') to = i - 1;
+        else if (k === 'Home') to = 0;
+        else if (k === 'End') to = tabs.length - 1;
+        if (to === -1) return;
+        e.preventDefault(); activate(to, true);
+      });
+    });
+
+    if (!reduced) {
+      gsap.from([...tabs, panel], {
+        y: 40, opacity: 0, duration: 0.7, ease: EASE, stagger: 0.08, clearProps: 'transform,opacity',
+        scrollTrigger: { trigger: root, start: 'top 85%', once: true },
+      });
+    }
+    void ScrollTrigger;
+  }
+</script>

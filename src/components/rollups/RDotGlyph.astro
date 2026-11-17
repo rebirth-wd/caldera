@@ -1,0 +1,19 @@
+---
+// Dot-matrix glyph drawn from a small bitmap (numerals for the feature tiles, pictograms for the infrastructure tiles).
+const { name, size = 50, fill = 'var(--color-chalk)' } = Astro.props;
+const maps: Record<string, string[]> = {
+  '1': ['..#..', '.##..', '..#..', '..#..', '..#..', '..#..', '.###.'],
+  '2': ['.###.', '#...#', '....#', '...#.', '..#..', '.#...', '#####'],
+  '3': ['####.', '....#', '....#', '.###.', '....#', '....#', '####.'],
+  bolt: ['....#..', '...#...', '..#....', '.#####.', '....#..', '...#...', '..#....'],
+  expand: ['###.###', '##...##', '#.#.#.#', '...#...', '#.#.#.#', '##...##', '###.###'],
+  shield: ['#######', '#.....#', '#..#..#', '#.###.#', '.#.#.#.', '..#.#..', '...#...'],
+  chip: ['.#.#.#.', '#######', '.#...#.', '##.#.##', '.#...#.', '#######', '.#.#.#.'],
+};
+const rows = maps[name] || maps['1'];
+const n = 7, pitch = 6, cols = rows[0].length, ox = ((n - cols) / 2) * pitch;
+const pts = rows.flatMap((r: string, y: number) => [...r].map((c, x) => (c === '#' ? [ox + x * pitch + pitch / 2, y * pitch + pitch / 2] : null)).filter(Boolean)) as number[][];
+---
+<svg width={size} height={size} viewBox={`0 0 ${n * pitch} ${n * pitch}`} aria-hidden="true" data-rglyph>
+  <g fill={fill}>{pts.map(([x, y]) => <circle cx={x} cy={y} r="2.1" />)}</g>
+</svg>

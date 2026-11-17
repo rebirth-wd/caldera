@@ -1,0 +1,49 @@
+---
+// "Core sections" grid: left heading + 4x2 Limestone cards with display-type wordmarks.
+import DotField from './DotField.astro';
+import { sections } from '../data/copy.ts';
+const xs = [56, 392, 728, 1064];
+---
+<section class="secs" id="sections" data-qa="sections" data-ref="0,7242,1440,747">
+  <DotField />
+  <div class="secs__inner">
+    <h2 class="display secs__title" data-reveal="chars" data-qa="sections-heading" data-ref="56,7342,1328,88">{sections.title}</h2>
+    <ul class="secs__grid" data-secs-grid>
+      {sections.items.map((name, i) => (
+        <li class="secs__cell" data-qa={`sections-card-${i + 1}`} data-ref={`${xs[i % 4]},${i < 4 ? 7514 : 7680},320,150`}>
+          <div class="secs-card" data-secs-card><span class="display secs-card__mark">{name}</span></div>
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>
+
+<style>
+  /* 100 + 88 + 84 + 316 + 159 = 747 (the footer starts at page y 7989). */
+  .secs { position: relative; height: 747px; padding: 100px 56px 0; overflow: hidden; }
+  .secs__inner { position: relative; z-index: 1; max-width: 1328px; margin-inline: auto; }
+  .secs__title { font-size: var(--text-heading-2xl); line-height: 88px; }
+  .secs__grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--spacing-16); margin: 84px 0 0; padding: 0; list-style: none; }
+  .secs__cell { height: 150px; }
+  .secs-card { display: grid; place-items: center; height: 100%; padding: var(--spacing-40) var(--spacing-24); background: var(--color-limestone); color: var(--color-obsidian); border-radius: var(--radius-cards); transition: background-color .3s ease, color .3s ease; }
+  .secs-card:hover { background: var(--color-ember); color: var(--color-limestone); }
+  .secs-card__mark { font-size: 28px; line-height: 1; letter-spacing: 0.02em; text-align: center; }
+
+  @media (max-width: 1023px) {
+    .secs { height: auto; padding: var(--spacing-80) var(--spacing-20); }
+    .secs__title { font-size: clamp(44px, 11vw, 80px); line-height: 1.1; }
+    .secs__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); margin-top: var(--spacing-40); }
+    .secs__cell { height: 120px; }
+    .secs-card { padding: var(--spacing-24) var(--spacing-12); border-radius: var(--radius-3xl-2); }
+    .secs-card__mark { font-size: 26px; }
+  }
+</style>
+
+<script>
+  import { gsap, EASE, reduced } from '../scripts/motion.ts';
+  const grid = document.querySelector<HTMLElement>('[data-secs-grid]');
+  if (grid && !reduced) {
+    gsap.from(grid.querySelectorAll('[data-secs-card]'), { opacity: 0, scale: 0.9, duration: 0.7, ease: EASE, stagger: 0.06, clearProps: 'transform,opacity',
+      scrollTrigger: { trigger: grid, start: 'top 88%', once: true } });
+  }
+</script>
