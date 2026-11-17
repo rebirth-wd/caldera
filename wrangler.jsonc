@@ -1,0 +1,10 @@
+// Cloudflare Workers — static assets only (the site is fully pre-rendered by `astro build`), so there is no `main`.
+// Deploy: npm run deploy
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "caldera",
+  "compatibility_date": "2026-11-18",
+  "assets": {
+    "directory": "./dist"
+  }
+}
