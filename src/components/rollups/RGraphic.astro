@@ -1,0 +1,240 @@
+---
+// Looping house-style graphics that stand in for the reference's static illustrations / UI mock-ups.
+// Obsidian solids + chalk dotted strokes (see ProdGraphicAssistant.astro). One repeating GSAP timeline each, paused off-screen.
+import ProdGlyph from '../ProdGlyph.astro';
+import { rGraphic as t } from '../../data/rollups.ts';
+const { kind = 'machine' } = Astro.props;
+const O = 'var(--color-obsidian)', C = 'var(--color-chalk)';
+const star = 'M0-18 5.5-5.5 18 0 5.5 5.5 0 18-5.5 5.5-18 0-5.5-5.5Z';
+const netNodes = [[66, 66], [509, 66], [36, 214], [539, 214], [104, 352], [471, 352]];
+const HUB = [287.5, 205];
+const bars = Array.from({ length: 52 }, (_, i) => 108 + i * 9);
+---
+{kind === 'machine' && (
+  <svg class="rg" viewBox="0 0 582 544" preserveAspectRatio="xMidYMid slice" aria-hidden="true" data-rg="machine">
+    <g transform="translate(290 275) rotate(20.56)">
+      <rect x="-460" y="-40" width="920" height="80" fill={O} opacity="0.22" />
+      {[-46, 46].map((y) => (
+        <g stroke-linecap="round" fill="none">
+          <line x1="-460" y1={y} x2="460" y2={y} stroke={O} stroke-width="14" />
+          <line x1="-460" y1={y} x2="460" y2={y} stroke={C} stroke-width="3.5" stroke-dasharray="0.1 13.9" data-flow="14" />
+        </g>
+      ))}
+      {[0, 1, 2, 3].map(() => (
+        <g data-block>
+          <rect x="-34" y="-34" width="68" height="68" rx="16" fill={O} />
+          <rect x="-22" y="-22" width="44" height="44" rx="8" fill="none" stroke={C} stroke-width="2.5" stroke-linecap="round" stroke-dasharray="0.1 8" data-raw />
+          <path d={star} fill={C} data-done />
+        </g>
+      ))}
+    </g>
+    <g stroke-linecap="round" fill="none">
+      <line x1="92" y1="446" x2="236" y2="352" stroke={O} stroke-width="14" />
+      <line x1="92" y1="446" x2="236" y2="352" stroke={C} stroke-width="3.5" stroke-dasharray="0.1 13.9" data-flow="-14" />
+    </g>
+    <g transform="translate(92 446)">
+      <g data-pad>
+        <circle r="52" fill={O} />
+        <circle r="39" fill="none" stroke={C} stroke-width="2.5" stroke-linecap="round" stroke-dasharray="0.1 8.068" />
+        <path d="M-9-14v28l23-14z" fill={C} />
+      </g>
+    </g>
+    <rect x="175" y="165" width="230" height="220" rx="36" fill={O} />
+    <rect x="197" y="187" width="186" height="128" rx="18" fill="none" stroke={C} stroke-width="3" stroke-linecap="round" stroke-dasharray="0.1 10" />
+    <g transform="translate(290 251)"><g data-core><ProdGlyph kind="plus" pitch={7} r={2.5} /></g></g>
+    <line x1="205" y1="350" x2="375" y2="350" stroke={C} stroke-width="3" stroke-linecap="round" stroke-dasharray="0.1 10" opacity="0.7" />
+    <line x1="205" y1="350" x2="205" y2="350" stroke={C} stroke-width="7" stroke-linecap="round" data-progress />
+  </svg>
+)}
+
+{kind === 'network' && (
+  <svg class="rg" viewBox="0 0 575 387" preserveAspectRatio="xMidYMid slice" aria-hidden="true" data-rg="network">
+    {netNodes.map(([x, y]) => (
+      <g stroke-linecap="round" fill="none">
+        <line x1={HUB[0]} y1={HUB[1]} x2={x} y2={y} stroke={O} stroke-width="14" />
+        <line x1={HUB[0]} y1={HUB[1]} x2={x} y2={y} stroke={C} stroke-width="3.5" stroke-dasharray="0.1 13.9" data-flow="-14" />
+      </g>
+    ))}
+    {netNodes.map(([x, y]) => (
+      <g transform={`translate(${x} ${y})`}>
+        <circle r="44" fill="none" stroke={C} stroke-width="3" opacity="0" data-ring />
+        <g data-node>
+          <rect x="-36" y="-36" width="72" height="72" rx="18" fill={O} />
+          <path d={star} fill={C} />
+        </g>
+      </g>
+    ))}
+    <g transform={`translate(${HUB[0]} ${HUB[1]})`}>
+      <g data-hub>
+        <circle r="78" fill={O} />
+        <circle r="62" fill="none" stroke={C} stroke-width="3" stroke-linecap="round" stroke-dasharray="0.1 9.739" data-flow="9.739" />
+        <ProdGlyph kind="burst" pitch={7} r={2.5} />
+      </g>
+    </g>
+  </svg>
+)}
+
+{kind === 'stack' && (
+  <svg class="rg" viewBox="0 0 555 529" preserveAspectRatio="xMidYMid slice" aria-hidden="true" data-rg="stack">
+    {t.stack.map((p, k) => {
+      const y = 97 + k * 176;
+      return (
+        <g transform={`translate(69 ${y})`}>
+          <rect width="416" height="160" rx="22" fill={O} />
+          <rect x="14" y="56" width="124" height="88" rx="12" fill={C} data-pick={k} />
+          {p.cells.map((c, i) => (
+            <g transform={`translate(${14 + i * 132} 56)`}>
+              <rect width="124" height="88" rx="12" fill="none" stroke={C} stroke-width="2.5" stroke-linecap="round" stroke-dasharray="0.1 8" />
+              <g style="mix-blend-mode:difference">
+                <circle cx="24" cy="26" r="10" fill="none" stroke={C} stroke-width="2.5" />
+                <circle cx="24" cy="26" r="3.5" fill={C} />
+                <text class="rg-b" x="14" y="68" font-size="13" fill={C}>{c}</text>
+              </g>
+            </g>
+          ))}
+          <text class="display rg-d" x="20" y="38" font-size="22" fill={C}>{p.title}</text>
+        </g>
+      );
+    })}
+  </svg>
+)}
+
+{kind === 'panel' && (
+  <svg class="rg" viewBox="0 0 555 484" preserveAspectRatio="xMidYMid slice" aria-hidden="true" data-rg="panel">
+    <defs><clipPath id="rg-type"><rect x="104" y="334" width="0" height="30" data-type /></clipPath></defs>
+    <rect x="72" y="42" width="412" height="216" rx="22" fill={O} />
+    <rect x="92" y="62" width="48" height="48" rx="10" fill="none" stroke={C} stroke-width="2.5" stroke-linecap="round" stroke-dasharray="0.1 8" />
+    <path d={star} fill={C} transform="translate(116 86) scale(0.8)" />
+    <text class="display rg-d" x="154" y="84" font-size="22" fill={C}>{t.panel.name}</text>
+    <text class="rg-b" x="154" y="104" font-size="11" fill={C} opacity="0.75">{t.panel.sub}</text>
+    <g transform="translate(416 79)"><g data-pill>
+      <rect x="-52" y="-14" width="104" height="28" rx="14" fill={C} />
+      <text class="rg-b" x="0" y="4" font-size="10.5" text-anchor="middle" fill={O}>{t.panel.action}</text>
+    </g></g>
+    <g stroke={C} stroke-width="2" stroke-linecap="round" stroke-dasharray="0.1 6" fill="none" opacity="0.8">
+      <line x1="92" y1="128" x2="464" y2="128" /><line x1="272" y1="144" x2="272" y2="240" />
+    </g>
+    {t.panel.pairs.map(([k, v], i) => (
+      <g transform={`translate(${i % 2 ? 290 : 92} ${i < 2 ? 156 : 204})`}>
+        <text class="rg-b" y="0" font-size="10" fill={C} opacity="0.7">{k}</text>
+        <text class="rg-b" y="20" font-size="15" fill={C}>{v}</text>
+      </g>
+    ))}
+    <rect x="72" y="272" width="412" height="170" rx="22" fill={O} />
+    <text class="display rg-d" x="92" y="312" font-size="22" fill={C}>{t.panel.field}</text>
+    <rect x="92" y="328" width="372" height="42" rx="12" fill="none" stroke={C} stroke-width="2.5" stroke-linecap="round" stroke-dasharray="0.1 8" />
+    <text class="rg-b" x="108" y="354" font-size="14" fill={C} clip-path="url(#rg-type)" data-typed>{t.panel.url}</text>
+    <rect x="108" y="339" width="2" height="20" fill={C} data-caret />
+    <rect x="92" y="386" width="64" height="26" rx="6" fill={C} />
+    <text class="rg-b" x="124" y="403" font-size="10.5" text-anchor="middle" fill={O}>{t.panel.chip}</text>
+  </svg>
+)}
+
+{kind === 'analytics' && (
+  <svg class="rg" viewBox="0 0 555 529" preserveAspectRatio="xMinYMid slice" aria-hidden="true" data-rg="analytics">
+    <rect x="69" y="66" width="560" height="520" rx="24" fill={O} />
+    <text class="display rg-d" x="90" y="116" font-size="26" fill={C}>{t.analytics.title}</text>
+    {[[89, 142, 238, 160], [345, 142, 300, 160], [89, 318, 560, 184]].map(([x, y, w, h]) => (
+      <rect x={x} y={y} width={w} height={h} rx="16" fill="none" stroke={C} stroke-width="2.5" stroke-linecap="round" stroke-dasharray="0.1 8" />
+    ))}
+    <text class="rg-b" x="110" y="178" font-size="12.5" fill={C}>{t.analytics.a}</text>
+    <text class="display rg-d" x="110" y="238" font-size="40" fill={C} data-count>24,680</text>
+    <g transform="translate(110 254)"><rect width="66" height="20" rx="4" fill={C} /><text class="rg-b" x="33" y="14" font-size="10" text-anchor="middle" fill={O}>{t.analytics.up}</text></g>
+    <text class="rg-b" x="366" y="178" font-size="12.5" fill={C}>{t.analytics.b}</text>
+    <text class="display rg-d" x="366" y="238" font-size="40" fill={C}>100%</text>
+    <g transform="translate(366 254)"><rect width="66" height="20" rx="4" fill={C} /><text class="rg-b" x="33" y="14" font-size="10" text-anchor="middle" fill={O}>{t.analytics.up}</text></g>
+    <text class="rg-b" x="110" y="354" font-size="12.5" fill={C}>{t.analytics.c}</text>
+    <text class="display rg-d" x="110" y="410" font-size="40" fill={C}>99.9%</text>
+    <g fill={C}>{bars.map((x) => <rect x={x} y="430" width="5" height="52" rx="1" data-bar />)}</g>
+  </svg>
+)}
+
+<style>
+  .rg { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .rg-b { font-family: var(--font-body); font-weight: 500; }
+  .rg-d { letter-spacing: 0.02em; }
+</style>
+
+<script>
+  import { gsap, ScrollTrigger, reduced } from '../../scripts/motion.ts';
+  const builders: Record<string, (svg: SVGSVGElement, q: <T extends Element>(s: string) => T[]) => gsap.core.Animation> = {
+    // Blocks ride the belt through the console (raw in, finished out); belt advances exactly one block spacing per loop.
+    machine(svg, q) {
+      const blocks = q<SVGGElement>('[data-block]'), flows = q<SVGElement>('[data-flow]');
+      const pad = q<SVGGElement>('[data-pad]')[0], core = q<SVGGElement>('[data-core]')[0], bar = q<SVGLineElement>('[data-progress]')[0];
+      const N = blocks.length, SPAN = 4 * 196, bump = (p: number, at: number, w: number) => Math.exp(-(((p - at) / w) ** 2));
+      const st = { p: 0 };
+      const draw = () => {
+        const p = st.p;
+        blocks.forEach((b, i) => {
+          const s = (i + p) / N;
+          b.setAttribute('transform', `translate(${-SPAN / 2 + s * SPAN} 0)`);
+          (b.querySelector('[data-raw]') as SVGElement).style.opacity = s < 0.5 ? '1' : '0';
+          (b.querySelector('[data-done]') as SVGElement).style.opacity = s < 0.5 ? '0' : '1';
+        });
+        flows.forEach((f) => f.setAttribute('stroke-dashoffset', String(-p * Number(f.dataset.flow) * 14)));
+        pad.setAttribute('transform', `scale(${1 - 0.1 * bump(p, 0.08, 0.05)})`);
+        core.setAttribute('transform', `scale(${1 + 0.14 * bump(p, 0.55, 0.08)})`);
+        bar.setAttribute('x2', String(205 + 170 * Math.min(1, p * 1.25)));
+        bar.style.opacity = String(p > 0.85 ? 1 - (p - 0.85) / 0.15 : Math.min(1, p * 12));
+      };
+      draw();
+      return gsap.to(st, { p: 1, duration: 2.8, ease: 'none', repeat: -1, paused: true, onUpdate: draw });
+    },
+    network(svg, q) {
+      const T = 4.8, tl = gsap.timeline({ repeat: -1, paused: true });
+      const nodes = q<SVGGElement>('[data-node]'), rings = q<SVGCircleElement>('[data-ring]'), hub = q<SVGGElement>('[data-hub]')[0];
+      gsap.set([hub, ...nodes, ...rings], { transformOrigin: '50% 50%' });
+      q<SVGElement>('[data-flow]').forEach((el) => tl.fromTo(el, { strokeDashoffset: 0 }, { strokeDashoffset: -Number(el.dataset.flow) * 8, duration: T, ease: 'none' }, 0));
+      tl.to(hub, { scale: 1.07, duration: 0.25, repeat: 1, yoyo: true, ease: 'power2.inOut' }, 0.2);
+      nodes.forEach((n, i) => {
+        const at = 0.9 + i * 0.45;
+        tl.to(n, { scale: 1.14, duration: 0.22, repeat: 1, yoyo: true, ease: 'power2.inOut' }, at)
+          .fromTo(rings[i], { scale: 1, opacity: 0.9 }, { scale: 1.6, opacity: 0, duration: 0.8, ease: 'power2.out', immediateRender: false }, at + 0.1);
+      });
+      return tl.to({}, { duration: 0.01 }, T - 0.01);
+    },
+    // The selected cell (chalk) steps through the three options and returns to where it started.
+    stack(svg, q) {
+      const tl = gsap.timeline({ repeat: -1, paused: true, defaults: { duration: 0.6, ease: 'power3.inOut' } });
+      q<SVGRectElement>('[data-pick]').forEach((r, k) => {
+        const seq = k === 0 ? [0, 1, 2, 0] : [1, 2, 0, 1];
+        gsap.set(r, { x: seq[0] * 132 });
+        seq.slice(1).forEach((c, i) => tl.to(r, { x: c * 132 }, 1.1 + i * 1.7 + k * 0.5));
+      });
+      return tl.to({}, { duration: 0.01 }, 5.6);
+    },
+    // An address is typed into the dotted field, the action pill acknowledges, the field clears.
+    panel(svg, q) {
+      const clip = q<SVGRectElement>('[data-type]')[0], caret = q<SVGRectElement>('[data-caret]')[0], pill = q<SVGGElement>('[data-pill]')[0];
+      const text = q<SVGTextElement>('[data-typed]')[0];
+      const w = Math.ceil(text.getComputedTextLength()) + 8, n = (text.textContent || '').length;
+      gsap.set(pill, { transformOrigin: '50% 50%' });
+      const tl = gsap.timeline({ repeat: -1, paused: true });
+      tl.fromTo(clip, { attr: { width: 0 } }, { attr: { width: w }, duration: 2.2, ease: `steps(${n})` }, 0.6)
+        .fromTo(caret, { x: 0 }, { x: w - 4, duration: 2.2, ease: `steps(${n})` }, 0.6)
+        .to(caret, { opacity: 0, duration: 0.01, repeat: 5, repeatDelay: 0.3, yoyo: true }, 2.9)
+        .to(pill, { scale: 1.1, duration: 0.2, repeat: 1, yoyo: true, ease: 'power2.inOut' }, 3.3)
+        .to(clip, { attr: { width: 0 }, duration: 0.5, ease: 'power2.in' }, 5.0)
+        .to(caret, { x: 0, duration: 0.5, ease: 'power2.in' }, 5.0)
+        .to({}, { duration: 0.01 }, 5.99);
+      return tl;
+    },
+    // A dip travels along the health bars while the counter ticks through a few values and back to the first.
+    analytics(svg, q) {
+      const barsEl = q<SVGRectElement>('[data-bar]'), count = q<SVGTextElement>('[data-count]')[0];
+      const vals = ['24,680', '24,712', '24,655', '24,731', '24,698'];
+      gsap.set(barsEl, { transformOrigin: '50% 100%' });
+      const tl = gsap.timeline({ repeat: -1, paused: true });
+      tl.to(barsEl, { keyframes: { scaleY: [1, 0.45, 1] }, duration: 0.44, ease: 'sine.inOut', stagger: 0.07 }, 0.2);
+      vals.forEach((v, i) => tl.call(() => { count.textContent = v; }, [], i * 0.9));
+      return tl.to({}, { duration: 0.01 }, 4.49);
+    },
+  };
+  document.querySelectorAll<SVGSVGElement>('[data-rg]').forEach((svg) => {
+    if (reduced) return;
+    const q = <T extends Element>(s: string) => [...svg.querySelectorAll<T>(s)];
+    const anim = builders[svg.dataset.rg || '']?.(svg, q);
+    if (anim) ScrollTrigger.create({ trigger: svg, start: 'top bottom', end: 'bottom top', onToggle: (s) => (s.isActive ? anim.play() : anim.pause()) });
+  });
+</script>

@@ -1,0 +1,78 @@
+---
+// Features: 137px heading over the drifting dot field, three alternating rows (757-wide text card + 555-wide media).
+// Rects from reference/rollups/REFERENCE.md "Features" (section 0,1948,1440,2282.5).
+import { rFeatures as d, rImages } from '../../data/rollups.ts';
+import DotField from '../DotField.astro';
+import RDotGlyph from './RDotGlyph.astro';
+import RMedia from './RMedia.astro';
+const rows = [
+  { h: 528.6, flip: false, tone: 'var(--color-plasma-violet)', kind: 'stack', ref: { row: '56,2497,1328,529', card: '56,2497,757,529', media: '829,2497,555,529', tile: '104,2545,76,76', info: '104,2819,661,158' } },
+  { h: 483.7, flip: true, tone: 'var(--color-ember)', kind: 'panel', ref: { row: '56,3042,1328,484', card: '627,3042,757,484', media: '56,3042,555,484', tile: '675,3090,76,76', info: '675,3294,661,183' } },
+  { h: 528.6, flip: false, tone: 'var(--color-sulfur)', kind: 'analytics', ref: { row: '56,3542,1328,529', card: '56,3542,757,529', media: '829,3542,555,529', tile: '104,3590,76,76', info: '104,3864,661,158' } },
+].map((r, i) => ({ ...r, card: d.cards[i] }));
+---
+<section class="rf" data-qa="r-features" data-ref="0,1948,1440,2283">
+  <DotField />
+  <div class="container-x rf__inner">
+    <h2 class="display rf__title" data-reveal="chars" data-qa="r-feat-heading" data-ref="56,2148,1328,258">
+      {d.lines.map((l) => <span class="rf__line">{l} </span>)}
+    </h2>
+    {rows.map((r, i) => (
+      <div class:list={['rf__row', { 'rf__row--flip': r.flip }]} style={`--h:${r.h}px`} data-rf-row data-qa={`r-feat-row-${i + 1}`} data-ref={r.ref.row}>
+        <article class="rf__card" data-qa={`r-feat-card-${i + 1}`} data-ref={r.ref.card}>
+          <div class="rf__tile" data-qa={`r-feat-tile-${i + 1}`} data-ref={r.ref.tile}><RDotGlyph name={String(i + 1)} size={50} /></div>
+          <div class="rf__info" data-qa={`r-feat-info-${i + 1}`} data-ref={r.ref.info}>
+            <h4 class="display rf__h4">{r.card.title}</h4>
+            <ul class="rf__list">
+              {r.card.points.map((p) => <li class="rf__point"><span class="rf__dot" aria-hidden="true">•</span><p>{p}</p></li>)}
+            </ul>
+          </div>
+        </article>
+        <div class="rf__media"><RMedia kind={r.kind} tone={r.tone} img={rImages[r.card.image]} qa={`r-feat-media-${i + 1}`} ref={r.ref.media} /></div>
+      </div>
+    ))}
+  </div>
+</section>
+
+<style>
+  .rf { position: relative; box-sizing: border-box; height: 2282.5px; padding: 200px 0 0; overflow: hidden; }
+  .rf__inner { position: relative; z-index: 1; }
+  .rf__title { font-size: 137px; line-height: 128.78px; color: var(--color-obsidian); margin-bottom: var(--spacing-92); }
+  .rf__line { display: block; white-space: nowrap; }
+
+  .rf__row { display: flex; gap: var(--spacing-16); height: var(--h); }
+  .rf__row + .rf__row { margin-top: var(--spacing-16); }
+  .rf__row--flip { flex-direction: row-reverse; }
+  .rf__card { flex: 0 0 calc((100% - 16px) * 757 / 1312); min-width: 0; box-sizing: border-box; padding: var(--spacing-48); border-radius: var(--radius-cards); background: var(--color-limestone); display: flex; flex-direction: column; justify-content: space-between; align-items: flex-start; }
+  .rf__tile { width: 76px; height: 76px; border-radius: var(--radius-small); background: var(--color-obsidian); display: grid; place-items: center; flex: none; }
+  .rf__info { width: 100%; display: flex; flex-direction: column; gap: var(--spacing-20); }
+  .rf__h4 { font-size: 40px; line-height: 40px; color: var(--color-obsidian); }
+  .rf__list { list-style: none; margin: 0; padding: 0 0 0 var(--spacing-8); display: flex; flex-direction: column; gap: var(--spacing-12); }
+  .rf__point { display: flex; gap: var(--spacing-8); font: 500 16px/24.8px var(--font-body); color: var(--color-obsidian); }
+  .rf__point p { margin: 0; flex: 1; min-width: 0; }
+  .rf__dot { flex: none; }
+  .rf__media { flex: 1 1 0; min-width: 0; display: flex; }
+  .rf__media > :global(.rmedia) { flex: 1; }
+
+  @media (max-width: 1100px) {
+    .rf { height: auto; padding: 120px 0 96px; }
+    .rf__title { font-size: clamp(40px, 9.5vw, 137px); line-height: .94; margin-bottom: var(--spacing-48); }
+    .rf__line { white-space: normal; }
+    .rf__row, .rf__row--flip { flex-direction: column; height: auto; }
+    .rf__card { flex: none; gap: var(--spacing-64); }
+    .rf__media { flex: none; aspect-ratio: 555 / 529; }
+  }
+  @media (max-width: 600px) {
+    .rf { padding: 96px 0 64px; }
+    .rf__inner { padding-inline: 20px; }
+    .rf__card { padding: var(--spacing-24); }
+    .rf__h4 { font-size: 32px; line-height: 32px; }
+  }
+</style>
+
+<script>
+  import { gsap, EASE, reduced } from '../../scripts/motion.ts';
+  if (!reduced) document.querySelectorAll<HTMLElement>('[data-rf-row]').forEach((row) => {
+    gsap.from(row, { y: 40, opacity: 0, duration: 0.9, ease: EASE, scrollTrigger: { trigger: row, start: 'top 88%', once: true } });
+  });
+</script>

@@ -1,0 +1,121 @@
+---
+// "Everything" section: centred heading + paragraph, three fused Ember stat cards, three Limestone wordmark boxes.
+// Rects from reference/rollups/REFERENCE.md "Ecosystem" (section 0,656,1440,1292).
+import { rEverything as d } from '../../data/rollups.ts';
+const cards = [{ x: 137, y: 1074, h: 278 }, { x: 531, y: 1087, h: 251 }, { x: 925, y: 1087, h: 251 }];
+const boxes = [
+  { ref: '137,1534,571,214', grid: '177,1638,499,78' },
+  { ref: '724,1534,579,214', grid: '764,1638,499,78' },
+];
+---
+<section class="re" data-qa="r-everything" data-ref="0,656,1440,1292">
+  <div class="re__head" data-qa="r-every-head" data-ref="283,824,874,170">
+    <h2 class="display re__title" data-reveal="chars" data-qa="r-every-h2" data-ref="283,824,874,88">{d.title}</h2>
+    <p class="re__sub" data-qa="r-every-sub" data-ref="517,944,406,50">{d.sub}</p>
+  </div>
+
+  <div class="re__cards" data-re-cards data-qa="r-every-cards" data-ref="137,1074,1166,278">
+    {d.stats.map((s, i) => (
+      <>
+        {i > 0 && (
+          <svg class="re__neck" width="16" height="141" viewBox="0 0 16 141" preserveAspectRatio="none" aria-hidden="true">
+            <path d="M-1 33H0A8 8 0 0 0 16 33H17V108H16A8 8 0 0 0 0 108H-1Z" fill="currentColor" />
+          </svg>
+        )}
+        <div class="re__card" data-qa={`r-every-stat-${i + 1}`} data-ref={`${cards[i].x},${cards[i].y},378,${cards[i].h}`}>
+          <p class="re__label" data-re-fade>{s.label}</p>
+          <p class="display re__value" data-re-fade data-re-value={s.value}>{s.value}</p>
+        </div>
+      </>
+    ))}
+  </div>
+
+  <div class="re__stack" data-re-box data-qa="r-every-stack" data-ref="137,1368,1166,150">
+    <h5 class="display re__h5" data-qa="r-every-stack-h5" data-ref="209,1427,186,32">{d.stack.title}</h5>
+    <div class="re__grid re__grid--stack" style="--cols:3" data-qa="r-every-stack-grid" data-ref="780,1408,483,70">
+      {d.stack.marks.map((m) => <span class="re__cell"><span class="display re__mark">{m}</span></span>)}
+    </div>
+  </div>
+
+  <div class="re__pair">
+    {d.boxes.map((b, i) => (
+      <div class:list={['re__box', `re__box--${i + 1}`]} data-re-box data-qa={`r-every-box-${i + 1}`} data-ref={boxes[i].ref}>
+        <h5 class="display re__h5 re__h5--c">{b.title}</h5>
+        <div class="re__grid" style={`--cols:${b.marks.length}`} data-qa={`r-every-box-grid-${i + 1}`} data-ref={boxes[i].grid}>
+          {b.marks.map((m) => <span class="re__cell"><span class="display re__mark">{m}</span></span>)}
+        </div>
+      </div>
+    ))}
+  </div>
+</section>
+
+<style>
+  .re { box-sizing: border-box; height: 1291.6px; padding: 168px 56px 0; display: flex; flex-direction: column; align-items: center; overflow: hidden; }
+  .re__head { width: 874px; max-width: 100%; height: 169.6px; display: flex; flex-direction: column; align-items: center; gap: var(--spacing-32); flex: none; }
+  .re__title { font-size: var(--text-heading-2xl); line-height: 88px; align-self: stretch; text-align: center; white-space: nowrap; color: var(--color-obsidian); }
+  .re__sub { margin: 0; width: 406px; max-width: 100%; font: 500 16px/24.8px var(--font-body); text-align: center; color: var(--color-obsidian); }
+
+  .re__cards { margin-top: var(--spacing-80); width: min(1166px, 100%); height: 278px; display: flex; align-items: center; flex: none; color: var(--color-ember); }
+  .re__card { flex: 1 1 0; min-width: 0; box-sizing: border-box; padding: var(--spacing-40); border-radius: var(--radius-cards); background: var(--color-ember); color: var(--color-limestone); }
+  .re__neck { flex: none; width: 15.4px; overflow: visible; }
+  .re__label { margin: 0; width: 200px; max-width: 100%; font: 500 18px/27px var(--font-body); }
+  .re__value { margin-top: var(--spacing-80); font-size: 64px; line-height: 64px; white-space: nowrap; font-variant-numeric: tabular-nums; }
+
+  .re__stack, .re__box { box-sizing: border-box; border-radius: var(--radius-cards); background: var(--color-limestone); flex: none; }
+  .re__stack { margin-top: var(--spacing-16); width: min(1166px, 100%); height: 150px; padding: var(--spacing-40) var(--spacing-40) var(--spacing-40) 72px; display: flex; align-items: center; justify-content: space-between; }
+  .re__h5 { font-size: var(--text-heading); line-height: 32px; letter-spacing: var(--tracking-heading); white-space: nowrap; color: var(--color-obsidian); }
+  .re__h5--c { text-align: center; }
+  .re__pair { margin-top: var(--spacing-16); width: min(1166px, 100%); display: flex; gap: var(--spacing-16); flex: none; }
+  .re__box { height: 214px; display: flex; flex-direction: column; align-items: center; gap: var(--spacing-40); }
+  .re__box--1 { flex: 0 0 calc((100% - 16px) * 571 / 1150); padding: var(--spacing-32) var(--spacing-32) var(--spacing-32) var(--spacing-40); }
+  .re__box--2 { flex: 1 1 0; min-width: 0; padding: var(--spacing-32) var(--spacing-40); }
+  .re__grid { display: grid; grid-template-columns: repeat(var(--cols), 1fr); width: 100%; height: 78px; }
+  .re__grid--stack { width: 483px; height: 70px; flex: none; }
+  .re__cell { display: flex; align-items: center; justify-content: center; min-width: 0; box-sizing: border-box; }
+  .re__cell + .re__cell { border-left: 1.5px dotted var(--color-obsidian); }
+  .re__mark { font-size: 24px; line-height: 24px; letter-spacing: 0.02em; color: var(--color-obsidian); }
+
+  @media (max-width: 1277px) {
+    .re { height: auto; padding-bottom: 120px; }
+    .re__head { height: auto; }
+    .re__title { font-size: clamp(36px, 6.4vw, 80px); line-height: 1.1; white-space: normal; }
+  }
+  @media (max-width: 900px) {
+    .re { padding: 96px 20px 80px; }
+    .re__cards { margin-top: var(--spacing-56); height: auto; flex-direction: column; align-items: stretch; gap: 14px; }
+    .re__neck { display: none; }
+    .re__card { flex: none; padding: var(--spacing-24); }
+    .re__value { margin-top: var(--spacing-40); font-size: 48px; line-height: 48px; }
+    .re__stack { height: auto; flex-direction: column; gap: var(--spacing-24); padding: var(--spacing-32) var(--spacing-24); }
+    .re__grid--stack { width: 100%; }
+    .re__pair { flex-direction: column; }
+    .re__box, .re__box--1, .re__box--2 { flex: none; height: auto; padding: var(--spacing-32) var(--spacing-16); gap: var(--spacing-24); }
+    .re__h5 { font-size: 26px; white-space: normal; text-align: center; }
+    .re__mark { font-size: 16px; line-height: 16px; }
+  }
+</style>
+
+<script>
+  import { gsap, EASE, reduced } from '../../scripts/motion.ts';
+  const root = document.querySelector<HTMLElement>('[data-qa="r-everything"]');
+  if (root && !reduced) {
+    const cards = root.querySelector<HTMLElement>('[data-re-cards]')!;
+    const boxes = [...root.querySelectorAll<HTMLElement>('[data-re-box]')];
+    const fades = [...cards.querySelectorAll<HTMLElement>('[data-re-fade]')];
+    // Same appear as the home stat cards: row scales/fades in, labels and values follow, values count up.
+    gsap.set([cards, ...boxes], { opacity: 0, scale: 0.9 });
+    gsap.set(fades, { opacity: 0, y: 16 });
+    const tl = gsap.timeline({ scrollTrigger: { trigger: cards, start: 'top 88%', once: true } });
+    tl.to(cards, { opacity: 1, scale: 1, duration: 0.7, ease: EASE })
+      .to(boxes, { opacity: 1, scale: 1, duration: 0.7, ease: EASE, stagger: 0.1 }, 0.12)
+      .to(fades, { opacity: 1, y: 0, duration: 0.5, ease: EASE, stagger: 0.06 }, 0.35);
+    cards.querySelectorAll<HTMLElement>('[data-re-value]').forEach((el, i) => {
+      const final = el.dataset.reValue || '', m = final.match(/^(\D*)(\d+)(\D*)$/);
+      if (!m) return;
+      const state = { n: 0 };
+      tl.to(state, { n: Number(m[2]), duration: 1.1, ease: 'power2.out',
+        onUpdate: () => { el.textContent = `${m[1]}${Math.round(state.n)}${m[3]}`; },
+        onComplete: () => { el.textContent = final; } }, 0.35 + i * 0.12);
+    });
+  }
+</script>
