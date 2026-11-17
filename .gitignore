@@ -1,0 +1,30 @@
+# dependencies
+node_modules/
+
+# build output
+dist/
+.astro/
+
+# Cloudflare / Wrangler
+.wrangler/
+.dev.vars
+.dev.vars.*
+
+# environment
+.env
+.env.*
+!.env.example
+
+# QA output (regenerate with qa/shoot.mjs)
+qa/out/
+
+# Reference screenshots of the third-party site are kept local only
+reference/**/*.jpg
+reference/**/*.png
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.log
