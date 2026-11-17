@@ -1,0 +1,96 @@
+---
+// "Enables": centred heading, title tile fused (vertical neck) to a 2x2 list card, then the violet preview banner
+// with two pills and looping device mock-ups. Rects from reference/metalayer/REFERENCE.md "Enables" (0,4681,1440,1596).
+import { mEnables as d } from '../../data/metalayer.ts';
+import DotField from '../DotField.astro';
+import MGraphic from './MGraphic.astro';
+// the horizontal neck of the other sections with x/y swapped (it is symmetric)
+const neckV = 'M33 -1V0A8 8 0 0 1 33 16V17H108V16A8 8 0 0 1 108 0V-1Z';
+---
+<section class="me" data-qa="m-enables" data-ref="0,4681,1440,1596">
+  <DotField />
+  <div class="me__inner">
+    <h2 class="display me__title" data-reveal="chars" data-qa="m-enables-h2" data-ref="270,4841,900,88">{d.title}</h2>
+
+    <div class="me__stack" data-me-in>
+      <div class="me__tile" data-qa="m-enables-title-tile" data-ref="251,5013,938,128">
+        <h3 class="display me__h3" data-me-fade>{d.sub}</h3>
+      </div>
+      <svg class="me__neck" width="141" height="16" viewBox="0 0 141 16" preserveAspectRatio="none" aria-hidden="true" data-qa="m-enables-neck" data-ref="650,5140,141,16"><path d={neckV} /></svg>
+      <div class="me__grid" data-qa="m-enables-grid" data-ref="251,5156,938,264">
+        {d.items.map((it, i) => <h5 class="display me__item" data-me-fade data-qa={`m-enables-item-${i + 1}`}>{it}</h5>)}
+        <span class="me__div me__div--v" style="top:48px" aria-hidden="true"></span>
+        <span class="me__div me__div--v" style="top:152px" aria-hidden="true"></span>
+        <span class="me__div me__div--h" aria-hidden="true"></span>
+      </div>
+    </div>
+
+    <div class="me__banner" data-me-in data-qa="m-enables-banner" data-ref="251,5436,938,741">
+      <h3 class="display me__bh3" data-me-fade data-qa="m-enables-banner-h3" data-ref="299,5539,842,48">{d.banner.title}</h3>
+      <div class="me__btns" data-me-fade>
+        <a class="btn me__btn me__btn--light" href={d.banner.primary.href} data-qa="m-enables-btn-1" data-ref="404,5619,311,48">{d.banner.primary.label}</a>
+        <a class="btn me__btn me__btn--dotted" href={d.banner.secondary.href} data-qa="m-enables-btn-2" data-ref="725,5619,311,48">{d.banner.secondary.label}</a>
+      </div>
+      <div class="me__devices" data-qa="m-enables-devices" data-ref="251,5729,938,448"><MGraphic kind="devices" /></div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .me { position: relative; box-sizing: border-box; height: 1596px; padding: 160px 56px 0; overflow: hidden; }
+  .me__inner { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; }
+  .me__title { width: 900px; max-width: 100%; font-size: var(--text-heading-2xl); line-height: 88px; text-align: center; white-space: nowrap; color: var(--color-obsidian); flex: none; }
+  .me__stack { margin-top: 84px; width: min(938px, 100%); display: flex; flex-direction: column; align-items: center; flex: none; }
+  .me__tile { width: 100%; height: 128px; box-sizing: border-box; padding: var(--spacing-40); border-radius: var(--radius-cards); background: var(--color-limestone); }
+  .me__h3 { font-size: var(--text-heading-lg); line-height: 48px; text-align: center; white-space: nowrap; color: var(--color-obsidian); }
+  .me__neck { width: 141px; height: 15px; overflow: visible; fill: var(--color-limestone); flex: none; }
+  .me__grid { position: relative; width: 100%; height: 264px; box-sizing: border-box; padding: var(--spacing-48); border-radius: var(--radius-cards); background: var(--color-limestone); display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 64px 64px; row-gap: var(--spacing-40); }
+  .me__item { display: grid; place-items: center; text-align: center; font-size: var(--text-heading); line-height: 32px; letter-spacing: var(--tracking-heading); white-space: nowrap; color: var(--color-obsidian); }
+  .me__div { position: absolute; box-sizing: border-box; }
+  .me__div--v { left: calc(50% - 1px); height: 64px; border-left: 1.5px dotted var(--color-obsidian); }
+  .me__div--h { left: 48px; right: 48px; top: 131px; border-top: 1.5px dotted var(--color-obsidian); }
+
+  .me__banner { position: relative; margin-top: var(--spacing-16); width: min(938px, 100%); height: 741px; box-sizing: border-box; padding-top: 103px; border-radius: var(--radius-cards); background: var(--color-plasma-violet); color: var(--color-limestone); overflow: hidden; display: flex; flex-direction: column; align-items: center; flex: none; }
+  .me__bh3 { font-size: var(--text-heading-lg); line-height: 48px; text-align: center; width: 842px; max-width: 100%; }
+  .me__btns { margin-top: var(--spacing-32); display: flex; gap: var(--spacing-10); }
+  .me__btn { width: 311px; }
+  .me__btn--light { background: var(--color-limestone); color: var(--color-obsidian); }
+  .me__btn--light:hover { background: var(--color-obsidian); color: var(--color-limestone); }
+  .me__btn--dotted { border: 1.5px dotted var(--color-limestone); color: var(--color-limestone); }
+  .me__btn--dotted:hover { background: var(--color-limestone); color: var(--color-obsidian); }
+  .me__devices { position: absolute; left: 0; right: 0; bottom: 0; height: 448px; }
+
+  @media (max-width: 1100px) {
+    .me { height: auto; padding: 96px 20px 80px; }
+    .me__title { font-size: clamp(32px, 8.4vw, 80px); line-height: 1.1; white-space: normal; }
+    .me__stack { margin-top: var(--spacing-48); }
+    .me__tile { height: auto; padding: var(--spacing-32) var(--spacing-24); }
+    .me__h3 { font-size: clamp(28px, 6vw, 48px); line-height: 1; white-space: normal; }
+    .me__grid { height: auto; padding: var(--spacing-32) var(--spacing-24); }
+    .me__div { display: none; }
+    .me__banner { height: auto; padding: var(--spacing-56) var(--spacing-24) 0; }
+    .me__bh3 { font-size: clamp(30px, 6vw, 48px); line-height: 1; }
+    .me__btns { flex-wrap: wrap; justify-content: center; width: 100%; }
+    .me__btn { width: auto; flex: 1 1 220px; max-width: 311px; }
+    .me__devices { position: relative; margin: var(--spacing-48) calc(var(--spacing-24) * -1) 0; align-self: stretch; height: auto; aspect-ratio: 938 / 448; }
+  }
+  @media (max-width: 600px) {
+    .me__grid { grid-template-columns: 1fr; grid-template-rows: none; row-gap: var(--spacing-24); }
+    .me__item { font-size: 26px; white-space: normal; }
+  }
+</style>
+
+<script>
+  import { gsap, EASE, reduced } from '../../scripts/motion.ts';
+  const root = document.querySelector<HTMLElement>('[data-qa="m-enables"]');
+  if (root && !reduced) {
+    // Inferred (home-page convention): blocks from opacity 0 / scale 0.9, then their contents fade up.
+    root.querySelectorAll<HTMLElement>('[data-me-in]').forEach((el) => {
+      const fades = el.querySelectorAll('[data-me-fade]');
+      gsap.set(el, { opacity: 0, scale: 0.9 }); gsap.set(fades, { opacity: 0, y: 16 });
+      gsap.timeline({ scrollTrigger: { trigger: el, start: 'top 88%', once: true } })
+        .to(el, { opacity: 1, scale: 1, duration: 0.7, ease: EASE })
+        .to(fades, { opacity: 1, y: 0, duration: 0.5, ease: EASE, stagger: 0.06 }, 0.3);
+    });
+  }
+</script>

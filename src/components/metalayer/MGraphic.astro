@@ -1,0 +1,263 @@
+---
+// Looping house-style graphics for /metalayer (stand-ins for the reference's isometric illustrations, network diagram
+// and device mock-ups). Obsidian solids + chalk dotted strokes as in ProdGraphicAssistant / rollups RGraphic.
+// Everything is declarative: the script below builds ONE repeating GSAP timeline per <svg data-mg> from data-* attributes
+// (data-flow, data-slide, data-pop, data-ring, data-move, data-blink, data-grow) and pauses it off-screen.
+import ProdGlyph from '../ProdGlyph.astro';
+import { mBridging, mGraphic as t } from '../../data/metalayer.ts';
+const { kind = 'hub' } = Astro.props;
+const O = 'var(--color-obsidian)', C = 'var(--color-chalk)', L = 'var(--color-limestone)', P = 'var(--color-pumice)', E = 'var(--color-ember)', V = 'var(--color-plasma-violet)';
+const star = 'M0-18 5.5-5.5 18 0 5.5 5.5 0 18-5.5 5.5-18 0-5.5-5.5Z';
+
+// hub: four corner nodes
+const HUB = [291, 272];
+const hubNodes = [[82, 100], [500, 100], [82, 444], [500, 444]];
+
+// net: disc positions read off reference/metalayer/ref-y700.jpg + ref-y1300.jpg (card coords, 938x464)
+const NH = [469, 232];
+const net = [[27, 82], [195, 120], [389, 72], [565, 32], [791, 64], [907, 150], [81, 232], [313, 200], [677, 176], [867, 278], [215, 306], [709, 334], [35, 378], [375, 378], [547, 392], [811, 428], [229, 436]];
+const dist = (a: number[], b: number[]) => Math.hypot(a[0] - b[0], a[1] - b[1]);
+const hubIdx = net.map((n, i) => (dist(n, NH) < 290 ? i : -1)).filter((i) => i >= 0);
+const mesh = new Set<string>();
+net.forEach((n, i) => {
+  net.map((m, j) => [dist(n, m), j]).filter(([, j]) => j !== i).sort((a, b) => a[0] - b[0]).slice(0, 3)
+    .forEach(([, j]) => mesh.add([Math.min(i, j), Math.max(i, j)].join('-')));
+});
+const meshLinks = [...mesh].map((k) => k.split('-').map(Number));
+const NET_T = 6;
+---
+{kind === 'hub' && (
+  <svg class="mg" viewBox="0 0 582 544" preserveAspectRatio="xMidYMid slice" aria-hidden="true" data-mg data-t="4.8">
+    {hubNodes.map(([x, y]) => (
+      <g stroke-linecap="round" fill="none">
+        <line x1={HUB[0]} y1={HUB[1]} x2={x} y2={y} stroke={O} stroke-width="14" />
+        <line x1={HUB[0]} y1={HUB[1]} x2={x} y2={y} stroke={C} stroke-width="3.5" stroke-dasharray="0.1 13.9" data-flow="-112" />
+      </g>
+    ))}
+    <g stroke-linecap="round" fill="none">
+      <line x1={HUB[0]} y1={HUB[1]} x2={HUB[0]} y2="600" stroke={O} stroke-width="44" />
+      <line x1={HUB[0]} y1={HUB[1]} x2={HUB[0]} y2="600" stroke={C} stroke-width="3.5" stroke-dasharray="0.1 13.9" data-flow="112" />
+    </g>
+    {hubNodes.map(([x, y], i) => (
+      <g transform={`translate(${x} ${y})`}>
+        <circle r="50" fill="none" stroke={C} stroke-width="3" opacity="0" data-ring={0.9 + i * 0.8} />
+        <g data-pop={0.8 + i * 0.8}>
+          <rect x="-42" y="-42" width="84" height="84" rx="20" fill={O} />
+          <rect x="-30" y="-30" width="60" height="60" rx="12" fill="none" stroke={C} stroke-width="2.5" stroke-linecap="round" stroke-dasharray="0.1 8" />
+          <path d={star} fill={C} />
+        </g>
+      </g>
+    ))}
+    <g transform={`translate(${HUB[0]} ${HUB[1]})`}>
+      <g data-pop="0.2">
+        <circle r="96" fill={O} />
+        <circle r="78" fill="none" stroke={C} stroke-width="3" stroke-linecap="round" stroke-dasharray="0.1 9.802" data-flow="98.02" />
+        <ProdGlyph kind="burst" pitch={9} r={3.1} />
+      </g>
+    </g>
+  </svg>
+)}
+
+{kind === 'relay' && (
+  <svg class="mg" viewBox="0 0 555 484" preserveAspectRatio="xMidYMid slice" aria-hidden="true" data-mg data-t="4.8">
+    <g transform="translate(277 242) rotate(-24)">
+      {[-52, 52].map((y) => (
+        <g stroke-linecap="round" fill="none">
+          <line x1="-460" y1={y} x2="460" y2={y} stroke={O} stroke-width="14" />
+          <line x1="-460" y1={y} x2="460" y2={y} stroke={C} stroke-width="3.5" stroke-dasharray="0.1 13.9" data-flow="-210" />
+        </g>
+      ))}
+      {[-2, -1, 0, 1].map((k) => (
+        <g transform={`translate(${k * 210} 0)`}>
+          <g data-slide="210">
+            <rect x="-30" y="-30" width="60" height="60" rx="14" fill={O} />
+            <path d={star} fill={C} transform="scale(.8)" />
+          </g>
+        </g>
+      ))}
+      {[-190, 190].map((x, i) => (
+        <g transform={`translate(${x} ${i ? 52 : -52})`}>
+          <g data-pop={1 + i * 2.2}>
+            <rect x="-44" y="-30" width="88" height="60" rx="18" fill={O} />
+            <rect x="-32" y="-18" width="64" height="36" rx="10" fill="none" stroke={C} stroke-width="2.5" stroke-linecap="round" stroke-dasharray="0.1 8" />
+          </g>
+        </g>
+      ))}
+    </g>
+    <line x1="277" y1="300" x2="277" y2="540" stroke={O} stroke-width="44" />
+    <g transform="translate(277 242)">
+      <g data-pop="2.3">
+        <rect x="-98" y="-104" width="196" height="208" rx="34" fill={O} />
+        <rect x="-76" y="-82" width="152" height="112" rx="16" fill="none" stroke={C} stroke-width="3" stroke-linecap="round" stroke-dasharray="0.1 10" />
+        <g fill={C}>{[[-24, -44], [-12, -32], [0, -20], [-12, -8], [-24, 4], [12, 4], [24, 4], [36, 4]].map(([x, y]) => <circle cx={x - 6} cy={y - 6} r="3.4" />)}</g>
+        <line x1="-70" y1="66" x2="70" y2="66" stroke={C} stroke-width="3" stroke-linecap="round" stroke-dasharray="0.1 10" opacity=".7" />
+        <line x1="-70" y1="66" x2="70" y2="66" stroke={C} stroke-width="7" stroke-linecap="round" data-grow="0.3" data-dur="3.6" />
+      </g>
+    </g>
+  </svg>
+)}
+
+{kind === 'switch' && (
+  <svg class="mg" viewBox="0 0 555 484" preserveAspectRatio="xMidYMid slice" aria-hidden="true" data-mg data-t="4.8">
+    <g transform="translate(277 242) rotate(-24)">
+      {[-150, -90, 90, 150].map((y, i) => (
+        <g stroke-linecap="round" fill="none">
+          <line x1="-520" y1={y} x2="520" y2={y} stroke={O} stroke-width="14" />
+          <line x1="-520" y1={y} x2="520" y2={y} stroke={C} stroke-width="3.5" stroke-dasharray="0.1 13.9" data-flow={i % 2 ? 112 : -112} />
+        </g>
+      ))}
+      <rect x="-200" y="-124" width="400" height="248" rx="40" fill={O} />
+      <rect x="-178" y="-102" width="356" height="204" rx="22" fill="none" stroke={C} stroke-width="3" stroke-linecap="round" stroke-dasharray="0.1 10" />
+      {[0, 1, 2, 3, 4, 5].map((i) => {
+        const x = -110 + (i % 3) * 110, y = -46 + Math.floor(i / 3) * 92;
+        return (
+          <g transform={`translate(${x} ${y})`}>
+            <circle r="30" fill="none" stroke={C} stroke-width="2.5" stroke-linecap="round" stroke-dasharray="0.1 8.168" />
+            <circle r="9" fill={C} opacity=".35" />
+            <g data-pop={i * 0.8}><circle r="22" fill={C} opacity="0" data-blink={i * 0.8} data-dur="0.8" /></g>
+          </g>
+        );
+      })}
+    </g>
+  </svg>
+)}
+
+{kind === 'net' && (
+  <svg class="mg" viewBox="0 0 938 464" preserveAspectRatio="xMidYMid slice" aria-hidden="true" data-mg data-t={NET_T}>
+    <g stroke={O} stroke-width="1.8" stroke-linecap="round" stroke-dasharray="0.1 6.9" fill="none" opacity=".55">
+      {meshLinks.map(([a, b]) => <line x1={net[a][0]} y1={net[a][1]} x2={net[b][0]} y2={net[b][1]} />)}
+      {hubIdx.map((i) => <line x1={NH[0]} y1={NH[1]} x2={net[i][0]} y2={net[i][1]} data-flow="-28" />)}
+      {[[27, 82, -20, 20], [565, 32, 600, -20], [907, 150, 960, 120], [35, 378, -20, 430], [811, 428, 850, 490], [229, 436, 200, 490], [547, 392, 560, 490], [389, 72, 370, -20]].map(([a, b, c, d]) => <line x1={a} y1={b} x2={c} y2={d} />)}
+    </g>
+    {hubIdx.map((i, k) => (
+      <circle cx={NH[0]} cy={NH[1]} r="6" fill={E} opacity="0" data-move={0.4 + k * (NET_T - 1.6) / hubIdx.length} data-to={`${net[i][0] - NH[0]},${net[i][1] - NH[1]}`} data-dur="1" />
+    ))}
+    {net.map(([x, y], i) => {
+      const k = hubIdx.indexOf(i);
+      return (
+        <g transform={`translate(${x} ${y})`}>
+          <g data-pop={k >= 0 ? 1.3 + k * (NET_T - 1.6) / hubIdx.length : undefined}>
+            <circle r="40" fill={O} />
+            {i % 3 === 1
+              ? <path d={star} fill={C} />
+              : <text class="display mg-d" y="12" text-anchor="middle" font-size="34" fill={C}>{mBridging.nodes[i]}</text>}
+          </g>
+        </g>
+      );
+    })}
+    <g transform={`translate(${NH[0]} ${NH[1]})`}>
+      <circle r="92" fill="none" stroke={O} stroke-width="2" opacity="0" data-ring="0.1" />
+      <g data-pop="0.1">
+        <circle r="86" fill={O} />
+        <ProdGlyph kind="burst" pitch={9} r={3.1} />
+      </g>
+    </g>
+  </svg>
+)}
+
+{kind === 'devices' && (
+  <svg class="mg mg--top" viewBox="0 0 938 448" preserveAspectRatio="xMidYMin slice" aria-hidden="true" data-mg data-t="6">
+    <defs>
+      <pattern id="mg-dots" width="9" height="9" patternUnits="userSpaceOnUse"><circle cx="4.5" cy="4.5" r="2.2" fill={C} opacity=".4" /></pattern>
+    </defs>
+    {/* tablet */}
+    <g transform="translate(606 306) rotate(3)">
+      <rect x="-290" y="-262" width="580" height="540" rx="38" fill={O} />
+      <rect x="-303" y="-150" width="16" height="70" rx="6" fill={O} />
+      <rect x="-270" y="-242" width="540" height="500" rx="22" fill={L} />
+      <rect x="-250" y="-224" width="26" height="26" rx="8" fill={E} />
+      <rect x="-196" y="-150" width="196" height="330" rx="16" fill={E} />
+      <rect x="-196" y="-150" width="196" height="330" rx="16" fill="url(#mg-dots)" />
+      <g transform="translate(26 -176)">
+        <rect width="222" height="400" rx="18" fill={P} />
+        <rect x="16" y="16" width="58" height="20" rx="10" fill={O} />
+        <text class="mg-b" x="45" y="30" text-anchor="middle" font-size="11" fill={L}>{t.tab}</text>
+        <text class="mg-b" x="86" y="30" font-size="11" fill={O} opacity=".6">{t.tab2}</text>
+        <rect x="16" y="52" width="190" height="62" rx="12" fill={L} />
+        <circle cx="38" cy="83" r="11" fill={V} /><rect x="56" y="74" width="46" height="7" rx="3.5" fill={O} /><rect x="56" y="86" width="30" height="5" rx="2.5" fill={O} opacity=".4" />
+        <circle cx="128" cy="83" r="11" fill={O} /><rect x="146" y="74" width="40" height="7" rx="3.5" fill={O} /><rect x="146" y="86" width="26" height="5" rx="2.5" fill={O} opacity=".4" />
+        <rect x="16" y="126" width="190" height="56" rx="12" fill={L} />
+        <text class="display mg-d" x="30" y="163" font-size="24" fill={O}>{t.amount}</text>
+        <rect x="150" y="144" width="44" height="20" rx="10" fill="none" stroke={O} stroke-width="1.5" stroke-dasharray="0.1 4" stroke-linecap="round" />
+        <text class="mg-b" x="172" y="158" text-anchor="middle" font-size="10" fill={O}>{t.chip}</text>
+        {[0, 1, 2, 3].map((i) => (
+          <g transform={`translate(${16 + i * 49} 196)`}>
+            <rect width="43" height="22" rx="11" fill="none" stroke={O} stroke-width="1.5" stroke-dasharray="0.1 4" stroke-linecap="round" />
+            <rect width="43" height="22" rx="11" fill={O} opacity="0" data-blink={0.3 + i * 1.4} data-dur="1.4" />
+          </g>
+        ))}
+        <rect x="16" y="234" width="190" height="56" rx="12" fill={L} />
+        <text class="display mg-d" x="30" y="271" font-size="24" fill={O}>{t.amount}</text>
+      </g>
+    </g>
+    {/* phone */}
+    <g transform="translate(206 268) rotate(-13)">
+      <rect x="-116" y="-236" width="232" height="480" rx="42" fill={O} />
+      <rect x="-128" y="-130" width="14" height="56" rx="6" fill={O} />
+      <rect x="-100" y="-220" width="200" height="448" rx="28" fill={L} />
+      <rect x="-84" y="-200" width="24" height="24" rx="7" fill={E} />
+      <rect x="-84" y="-160" width="52" height="20" rx="10" fill={O} />
+      <text class="mg-b" x="-58" y="-146" text-anchor="middle" font-size="11" fill={L}>{t.tab}</text>
+      <text class="mg-b" x="-22" y="-146" font-size="11" fill={O} opacity=".6">{t.tab2}</text>
+      <rect x="-84" y="-126" width="168" height="58" rx="12" fill={P} />
+      <circle cx="-64" cy="-97" r="10" fill={V} /><rect x="-48" y="-105" width="38" height="7" rx="3.5" fill={O} /><rect x="-48" y="-93" width="26" height="5" rx="2.5" fill={O} opacity=".4" />
+      <circle cx="14" cy="-97" r="10" fill={O} /><rect x="30" y="-105" width="38" height="7" rx="3.5" fill={O} /><rect x="30" y="-93" width="24" height="5" rx="2.5" fill={O} opacity=".4" />
+      <rect x="-84" y="-56" width="168" height="52" rx="12" fill={P} />
+      <text class="display mg-d" x="-70" y="-21" font-size="22" fill={O}>{t.amount}</text>
+      {[0, 1, 2, 3].map((i) => (
+        <g transform={`translate(${-84 + i * 43} 8)`}>
+          <rect width="38" height="20" rx="10" fill="none" stroke={O} stroke-width="1.5" stroke-dasharray="0.1 4" stroke-linecap="round" />
+          <rect width="38" height="20" rx="10" fill={O} opacity="0" data-blink={0.3 + i * 1.4} data-dur="1.4" />
+        </g>
+      ))}
+      <rect x="-84" y="42" width="168" height="52" rx="12" fill={P} />
+      <text class="display mg-d" x="-70" y="77" font-size="22" fill={O}>{t.amount}</text>
+      <rect x="-84" y="108" width="168" height="5" rx="2.5" fill={O} opacity=".15" />
+      <rect x="-84" y="108" width="168" height="5" rx="2.5" fill={O} data-grow="0.3" data-dur="5" />
+      <g transform="translate(0 144)">
+        <g data-pop="5.3">
+          <rect x="-84" y="-18" width="168" height="36" rx="18" fill={E} />
+          <text class="mg-b" y="4" text-anchor="middle" font-size="12" fill={L}>{t.action}</text>
+        </g>
+      </g>
+    </g>
+  </svg>
+)}
+
+<style>
+  .mg { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .mg-b { font-family: var(--font-body); font-weight: 500; }
+  .mg-d { letter-spacing: 0.02em; }
+</style>
+
+<script>
+  import { gsap, ScrollTrigger, reduced } from '../../scripts/motion.ts';
+  document.querySelectorAll<SVGSVGElement>('[data-mg]').forEach((svg) => {
+    if (reduced) return;
+    const T = Number(svg.dataset.t) || 4.8;
+    const q = (s: string) => [...svg.querySelectorAll<SVGElement>(s)];
+    const tl = gsap.timeline({ repeat: -1, paused: true });
+    const at = (el: SVGElement, k: string) => Number(el.dataset[k]) % T;
+    // dotted strokes march by a whole number of dash periods per loop (seamless)
+    q('[data-flow]').forEach((el) => tl.fromTo(el, { strokeDashoffset: 0 }, { strokeDashoffset: Number(el.dataset.flow), duration: T, ease: 'none' }, 0));
+    // conveyor items advance exactly one spacing per loop
+    q('[data-slide]').forEach((el) => tl.fromTo(el, { x: 0 }, { x: Number(el.dataset.slide), duration: T, ease: 'none' }, 0));
+    q('[data-pop]').forEach((el) => { gsap.set(el, { transformOrigin: '50% 50%' }); tl.to(el, { scale: 1.1, duration: 0.22, repeat: 1, yoyo: true, ease: 'power2.inOut' }, Math.min(at(el, 'pop'), T - 0.5)); });
+    q('[data-ring]').forEach((el) => { gsap.set(el, { transformOrigin: '50% 50%' }); tl.fromTo(el, { scale: 1, opacity: 0.9 }, { scale: 1.6, opacity: 0, duration: 0.8, ease: 'power2.out', immediateRender: false }, Math.min(at(el, 'ring'), T - 0.85)); });
+    q('[data-move]').forEach((el) => {
+      const [dx, dy] = (el.dataset.to || '0,0').split(',').map(Number), d = Number(el.dataset.dur) || 1, a = Math.min(at(el, 'move'), T - d - 0.2);
+      tl.fromTo(el, { x: 0, y: 0, opacity: 1 }, { x: dx, y: dy, duration: d, ease: 'power1.inOut', immediateRender: false }, a).to(el, { opacity: 0, duration: 0.15 }, a + d);
+    });
+    q('[data-blink]').forEach((el) => {
+      const d = Number(el.dataset.dur) || 0.6, a = Math.min(at(el, 'blink'), T - d);
+      tl.to(el, { opacity: 1, duration: 0.2, ease: 'power2.out' }, a).to(el, { opacity: 0, duration: 0.2, ease: 'power2.in' }, a + d - 0.2);
+    });
+    q('[data-grow]').forEach((el) => {
+      const d = Number(el.dataset.dur) || 2, a = at(el, 'grow');
+      gsap.set(el, { transformOrigin: '0% 50%' });
+      tl.fromTo(el, { scaleX: 0, opacity: 1 }, { scaleX: 1, duration: d, ease: 'none', immediateRender: false }, a).to(el, { opacity: 0, duration: 0.3 }, Math.min(a + d, T - 0.3));
+    });
+    tl.to({}, { duration: 0.01 }, T - 0.01);
+    ScrollTrigger.create({ trigger: svg, start: 'top bottom', end: 'bottom top', onToggle: (s) => (s.isActive ? tl.play() : tl.pause()) });
+  });
+</script>

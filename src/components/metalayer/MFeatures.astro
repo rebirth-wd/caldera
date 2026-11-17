@@ -1,0 +1,67 @@
+---
+// "Features": 137px heading over the drifting dot field, two mirrored rows (555x484 media + 757x484 text card).
+// Rects from reference/metalayer/REFERENCE.md "Features" (section 0,2079,1440,1693).
+import { mFeatures as d, mImages } from '../../data/metalayer.ts';
+import DotField from '../DotField.astro';
+import MMedia from './MMedia.astro';
+const refs = [
+  { row: '56,2629,1328,484', media: '56,2629,555,484', card: '627,2629,757,484', h3: '667,2669,660,96', p: '667,2991,532,81', tone: 'var(--color-ember)' },
+  { row: '56,3128,1328,484', media: '829,3128,555,484', card: '56,3128,757,484', h3: '96,3168,580,96', p: '96,3491,532,81', tone: 'var(--color-plasma-violet)' },
+];
+---
+<section class="mf" data-qa="m-features" data-ref="0,2079,1440,1693">
+  <DotField />
+  <div class="container-x mf__inner">
+    <h2 class="display mf__title" data-reveal="chars" data-qa="m-features-h2" data-ref="56,2279,1328,258">
+      {d.lines.map((l) => <span class="mf__line">{l} </span>)}
+    </h2>
+    {d.rows.map((r, i) => (
+      <div class:list={['mf__row', { 'mf__row--flip': i === 1 }]} data-mf-row data-qa={`m-features-row-${i + 1}`} data-ref={refs[i].row}>
+        <div class="mf__media"><MMedia kind={r.kind} tone={refs[i].tone} img={mImages[r.image as keyof typeof mImages]} qa={`m-features-media-${i + 1}`} ref={refs[i].media} /></div>
+        <article class="mf__card" data-qa={`m-features-card-${i + 1}`} data-ref={refs[i].card}>
+          <h3 class="display mf__h3" style={`max-width:${r.h3w}px`} data-qa={`m-features-h3-${i + 1}`} data-ref={refs[i].h3}>{r.lines.map((l) => <span class="mf__line">{l} </span>)}</h3>
+          <p class="mf__p" data-qa={`m-features-p-${i + 1}`} data-ref={refs[i].p}>{r.body}</p>
+        </article>
+      </div>
+    ))}
+  </div>
+</section>
+
+<style>
+  .mf { position: relative; box-sizing: border-box; height: 1693px; padding: 200px 0 0; overflow: hidden; }
+  .mf__inner { position: relative; z-index: 1; }
+  .mf__title { font-size: 137px; line-height: 128.78px; height: 258px; color: var(--color-obsidian); margin-bottom: var(--spacing-92); }
+  .mf__line { display: block; white-space: nowrap; }
+  .mf__row { display: flex; gap: var(--spacing-16); height: 484px; }
+  .mf__row + .mf__row { margin-top: 15px; }
+  .mf__row--flip { flex-direction: row-reverse; }
+  .mf__media { flex: 0 0 calc((100% - 16px) * 555 / 1312); min-width: 0; display: flex; }
+  .mf__media > :global(.mmedia) { flex: 1; }
+  .mf__card { flex: 1 1 0; min-width: 0; box-sizing: border-box; padding: var(--spacing-40); border-radius: var(--radius-cards); background: var(--color-limestone); display: flex; flex-direction: column; justify-content: space-between; }
+  .mf__h3 { width: 100%; font-size: var(--text-heading-lg); line-height: 48px; min-height: 96px; color: var(--color-obsidian); }
+  .mf__p { margin: 0 0 1px; width: 532px; max-width: 100%; min-height: 81px; font: 500 18px/27px var(--font-body); color: var(--color-obsidian); }
+
+  @media (max-width: 1100px) {
+    .mf { height: auto; padding: 120px 0 96px; }
+    .mf__title { font-size: clamp(40px, 9.5vw, 137px); line-height: .94; height: auto; margin-bottom: var(--spacing-48); }
+    .mf__row, .mf__row--flip { flex-direction: column; height: auto; }
+    .mf__media { flex: none; aspect-ratio: 555 / 484; }
+    .mf__card { flex: none; gap: var(--spacing-64); }
+    .mf__line { white-space: normal; }
+    .mf__h3 { min-height: 0; }
+    .mf__p { min-height: 0; }
+  }
+  @media (max-width: 600px) {
+    .mf__inner { padding-inline: 20px; }
+    .mf__card { padding: var(--spacing-24); }
+    .mf__h3 { font-size: 32px; line-height: 32px; }
+  }
+</style>
+
+<script>
+  import { gsap, EASE, reduced } from '../../scripts/motion.ts';
+  // Inferred (home-page convention): rows rise 40px while fading in.
+  if (!reduced) document.querySelectorAll<HTMLElement>('[data-mf-row]').forEach((row) => {
+    gsap.from(row, { y: 40, opacity: 0, duration: 0.9, ease: EASE, scrollTrigger: { trigger: row, start: 'top 88%', once: true } });
+  });
+</script>
