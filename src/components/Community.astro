@@ -1,0 +1,128 @@
+---
+// Community: centred heading, three fused Limestone tiles, violet newsletter card.
+// Reference rects (page coords) are carried in data-ref for qa/shoot.mjs.
+import DotField from './DotField.astro';
+import Icon from './Icon.astro';
+import { community, site } from '../data/copy.ts';
+const tileX = [251, 569, 887];
+---
+<section class="comm" id="community" data-qa="community" data-ref="0,5950,1440,1292">
+  <DotField />
+  <div class="comm__inner">
+    <h2 class="display comm__title" data-reveal="chars" data-qa="community-heading" data-ref="361,6110,719,180">
+      {community.lines.map((l) => <span class="comm__line">{l}</span>)}
+    </h2>
+
+    <div class="comm__tiles" data-comm-tiles>
+      {community.tiles.map((t, i) => (
+        <a class="comm-tile" href={"#"} data-qa={`community-tile-${i + 1}`} data-ref={`${tileX[i]},6370,302,300`}>
+          {i > 0 && (
+            <svg class="comm-neck" data-comm-neck width="17" height="141" viewBox="0 0 17 141" aria-hidden="true">
+              <path d="M0 33a8.5 8.5 0 0 0 17 0v75a8.5 8.5 0 0 0-17 0Z" fill="var(--color-limestone)" />
+            </svg>
+          )}
+          <span class="comm-tile__face" data-comm-face>
+            <span class="comm-tile__icon"><Icon name={t} size={36} /></span>
+            <span class="display comm-tile__value" data-comm-fit>{community.values[i]}</span>
+          </span>
+        </a>
+      ))}
+    </div>
+
+    <div class="comm-signup" data-qa="community-signup" data-ref="251,6686,938,456">
+      <div class="comm-signup__face" data-comm-signup>
+        <h3 class="display comm-signup__title" data-qa="community-signup-heading" data-ref="428,6774,584,144">{community.signup}</h3>
+        <form class="comm-form" data-comm-form novalidate>
+          <label class="sr-only" for="comm-email">{community.placeholder}</label>
+          <input class="comm-form__input" id="comm-email" name="email" type="email" required autocomplete="email"
+            placeholder={community.placeholder} data-qa="community-input" data-ref="315,6998,810,80" />
+          <button class="comm-form__submit" type="submit" aria-label={community.signup}><Icon name="Play" size={24} /></button>
+          <p class="comm-form__status" data-comm-status role="status" aria-live="polite"></p>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .comm { position: relative; height: 1292px; padding: 160px 56px 100px; overflow: hidden; }
+  .comm__inner { position: relative; z-index: 1; max-width: 1328px; margin-inline: auto; display: flex; flex-direction: column; align-items: center; }
+  .comm__title { width: 719px; max-width: 100%; height: 180px; font-size: var(--text-heading-2xl); line-height: 88px; text-align: center; }
+  .comm__line { display: block; }
+
+  .comm__tiles { display: flex; gap: var(--spacing-16); margin-top: var(--spacing-80); }
+  .comm-tile { position: relative; display: block; width: 302px; height: 300px; flex: none; }
+  .comm-tile__face { display: flex; flex-direction: column; justify-content: space-between; width: 100%; height: 100%; padding: var(--card-padding); background: var(--color-limestone); border-radius: var(--radius-cards); }
+  .comm-tile__icon { display: grid; place-items: center; width: 72px; height: 72px; border-radius: var(--radius-pills); background: var(--color-ember); color: var(--color-limestone); transition: transform .35s cubic-bezier(.22,1,.36,1); }
+  .comm-tile:hover .comm-tile__icon, .comm-tile:focus-visible .comm-tile__icon { transform: scale(1.1); }
+  .comm-tile__value { display: inline-block; align-self: flex-start; font-size: 56px; line-height: 56px; white-space: nowrap; }
+  .comm-tile:focus-visible { outline: 2px solid var(--color-obsidian); outline-offset: 4px; border-radius: var(--radius-cards); }
+  /* Neck: bridges the 16px gap (0.5px overlap each side), 59px solid waist with concave notches above/below. */
+  .comm-neck { position: absolute; left: -16.5px; top: 79.5px; pointer-events: none; }
+
+  .comm-signup { width: 938px; max-width: 100%; height: 456px; margin-top: var(--spacing-16); }
+  .comm-signup__face { display: flex; flex-direction: column; align-items: center; gap: var(--spacing-80); height: 100%; padding: 88px var(--spacing-64) var(--spacing-64); background: var(--color-plasma-violet); border-radius: var(--radius-cards); }
+  .comm-signup__title { width: 584px; max-width: 100%; min-height: 144px; font-size: var(--text-heading-lg); line-height: 48px; text-align: center; text-wrap: balance; color: var(--color-limestone); }
+  .comm-form { position: relative; width: 100%; }
+  .comm-form__input { display: block; width: 100%; height: 80px; padding: var(--spacing-24) var(--spacing-64) var(--spacing-24) var(--spacing-32); background: transparent; border: 1.5px dotted var(--color-chalk); border-radius: var(--radius-inputs); color: var(--color-chalk); font: 500 16px/1.55 var(--font-body); outline: none; }
+  .comm-form__input::placeholder { color: var(--color-chalk); opacity: .75; }
+  .comm-form__input:focus-visible { border-style: solid; }
+  .comm-form__submit { position: absolute; right: var(--spacing-20); top: var(--spacing-20); display: grid; place-items: center; width: 40px; height: 40px; border-radius: var(--radius-pills); color: var(--color-chalk); cursor: pointer; transition: background-color .25s ease, color .25s ease; }
+  .comm-form__submit:hover, .comm-form__submit:focus-visible { background: var(--color-chalk); color: var(--color-plasma-violet); outline: none; }
+  .comm-form__status { position: absolute; left: var(--spacing-32); top: calc(100% + var(--spacing-12)); margin: 0; font-size: var(--text-body-sm); line-height: var(--leading-body-sm); color: var(--color-limestone); }
+  .comm-form.is-done .comm-form__submit { pointer-events: none; opacity: .5; }
+
+  @media (max-width: 1023px) {
+    .comm { height: auto; padding: var(--spacing-80) var(--spacing-20); }
+    .comm__title { width: auto; height: auto; font-size: clamp(44px, 11vw, 80px); line-height: 1.1; }
+    .comm__tiles { flex-direction: column; width: 100%; max-width: 938px; margin-top: var(--spacing-48); }
+    .comm-tile { width: 100%; height: auto; }
+    .comm-tile__face { gap: var(--spacing-64); }
+    .comm-neck { display: none; }
+    .comm-signup { height: auto; }
+    .comm-signup__face { gap: var(--spacing-40); padding: var(--spacing-56) var(--spacing-24) var(--spacing-56); }
+    .comm-signup__title { min-height: 0; font-size: clamp(32px, 8vw, 48px); line-height: 1; }
+    .comm-form__input { height: 64px; padding-block: var(--spacing-16); padding-left: var(--spacing-24); }
+    .comm-form__submit { top: var(--spacing-12); right: var(--spacing-12); }
+  }
+</style>
+
+<script>
+  import { gsap, EASE, reduced } from '../scripts/motion.ts';
+
+  // Shrink a platform name only as far as needed to fit the tile's 222px content width.
+  const fit = () => document.querySelectorAll<HTMLElement>('[data-comm-fit]').forEach((el) => {
+    el.style.fontSize = '';
+    const max = el.parentElement!.clientWidth - 80; // tile padding 40 + 40
+    let size = parseFloat(getComputedStyle(el).fontSize);
+    // offsetWidth ignores the entrance transform (scale 0.9), unlike getBoundingClientRect.
+    while (el.offsetWidth > max && size > 28) { size -= 1; el.style.fontSize = `${size}px`; }
+  });
+  document.fonts.ready.then(fit);
+  addEventListener('resize', fit);
+
+  const form = document.querySelector<HTMLFormElement>('[data-comm-form]');
+  if (form) {
+    const input = form.querySelector<HTMLInputElement>('input')!;
+    const status = form.querySelector<HTMLElement>('[data-comm-status]')!;
+    // No newsletter endpoint is known: never submit, just acknowledge inline.
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      if (!input.checkValidity()) { input.reportValidity(); return; }
+      form.classList.add('is-done'); input.value = ''; input.blur();
+      status.textContent = 'Thanks';
+      if (!reduced) gsap.from(status, { opacity: 0, y: 8, duration: 0.4, ease: EASE });
+    });
+  }
+
+  if (!reduced) {
+    const row = document.querySelector<HTMLElement>('[data-comm-tiles]');
+    if (row) {
+      const tl = gsap.timeline({ scrollTrigger: { trigger: row, start: 'top 85%', once: true } });
+      tl.from(row.querySelectorAll('[data-comm-face]'), { opacity: 0, scale: 0.9, duration: 0.7, ease: EASE, stagger: 0.1 })
+        .from(row.querySelectorAll('[data-comm-neck]'), { opacity: 0, scaleY: 0, transformOrigin: '50% 50%', duration: 0.4, ease: EASE, stagger: 0.1 }, '-=0.35');
+    }
+    const card = document.querySelector<HTMLElement>('[data-comm-signup]');
+    if (card) gsap.from(card, { opacity: 0, y: 40, duration: 0.7, ease: EASE, scrollTrigger: { trigger: card.parentElement!, start: 'top 90%', once: true } });
+  }
+</script>

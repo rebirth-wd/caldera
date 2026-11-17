@@ -1,0 +1,158 @@
+---
+// Fixed header. Expanded at page top (transparent, full width); collapses to the centred Limestone
+// pill once scrollY > 13 (REFERENCE.md "Header"). Below 1024px: logo + burger opening a full-screen menu.
+import Logo from './Logo.astro';
+import Icon from './Icon.astro';
+import { nav, socials, headerCta, site } from '../data/copy.ts';
+---
+<header class="hdr" data-header>
+  <div class="hdr-panel" id="mobile-menu" data-menu-panel aria-label="Menu">
+    <nav class="hdr-panel-nav" aria-label="Mobile">
+      {nav.map((l) => <a class="display hdr-panel-link" href={l.href} data-menu-item>{l.label}</a>)}
+    </nav>
+    <div class="hdr-panel-foot" data-menu-item>
+      <ul class="hdr-socials" aria-label={`${site.name} on social media`}>
+        {socials.map((s) => <li><a class="hdr-social" href="#community" aria-label={s}><Icon name={s} /></a></li>)}
+      </ul>
+      <a class="btn btn-ember btn-lg" href={headerCta.href}>{headerCta.label}</a>
+    </div>
+  </div>
+
+  <div class="hdr-bar" data-bar data-qa="header-wrapper" data-ref="40,24,1360,64">
+    <div class="hdr-left" data-left>
+      <a class="hdr-logo" href="/" aria-label={`${site.name} home`} data-logo data-qa="header-logo" data-ref="64,40,152,32">
+        <Logo />
+      </a>
+      <span class="hdr-divider hdr-desk" aria-hidden="true" data-qa="header-divider-l" data-ref="248,38,4,36"></span>
+      <nav class="hdr-nav hdr-desk" aria-label="Primary">
+        {nav.map((l, i) => (
+          <a class="hdr-link" href={l.href} aria-current={(Astro.url.pathname.replace(/\/$/, '') === l.href || (l.href !== '#' && Astro.url.pathname.startsWith(l.href + '/'))) ? 'page' : undefined} {...(i === 0 ? { 'data-qa': 'header-nav-first', 'data-ref': '284,44,54,25' } : {})}>{l.label}</a>
+        ))}
+      </nav>
+    </div>
+    <div class="hdr-right" data-right data-qa="header-right" data-ref="1068,32,324,48">
+      <ul class="hdr-socials hdr-desk" aria-label={`${site.name} on social media`}>
+        {socials.map((s) => <li><a class="hdr-social" href="#community" aria-label={s}><Icon name={s} /></a></li>)}
+      </ul>
+      <span class="hdr-divider hdr-desk" aria-hidden="true" data-qa="header-divider-r" data-ref="1220,38,4,36"></span>
+      <a class="btn btn-ember hdr-cta" href={headerCta.href} data-qa="header-cta" data-ref="1256,32,136,48">{headerCta.label}</a>
+      <button class="hdr-burger" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-menu" data-burger>
+        <span data-burger-line></span><span data-burger-line></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<style>
+  .hdr { position: fixed; inset: 0 0 auto 0; z-index: 50; height: 112px; padding: var(--spacing-24) var(--spacing-40); pointer-events: none; }
+  .hdr-bar { position: relative; z-index: 2; display: flex; align-items: center; justify-content: space-between; width: 100%; height: 64px; margin-inline: auto;
+    padding: var(--spacing-8) var(--spacing-8) var(--spacing-8) var(--spacing-24); border-radius: var(--radius-pills); background: transparent; pointer-events: auto; }
+  .hdr-left { display: flex; align-items: center; gap: var(--spacing-32); height: 36px; min-width: 0; }
+  .hdr-right { display: flex; align-items: center; gap: var(--spacing-32); height: 48px; flex: none; }
+  .hdr-logo { display: block; flex: none; width: 152px; height: 32px; overflow: hidden; }
+  .hdr-logo :global(svg) { flex: none; max-width: none; }
+  .hdr-divider { display: flex; justify-content: center; flex: none; width: 4px; height: 36px; }
+  .hdr-divider::before { content: ''; height: 100%; border-left: 1.5px dotted var(--color-obsidian); }
+  .hdr-nav { display: flex; align-items: center; gap: var(--spacing-24); }
+  .hdr-link { position: relative; font: 500 16px/24.8px var(--font-body); color: var(--color-obsidian); white-space: nowrap; }
+  .hdr-link::after { content: ''; position: absolute; left: 0; right: 0; top: 20px; height: 1px; background: var(--color-obsidian); opacity: 0; transition: opacity .25s ease; }
+  .hdr-link:hover::after, .hdr-link:focus-visible::after { opacity: 1; }
+  /* current page: permanent 2px Ember underline (measured on the reference inner pages) */
+  .hdr-link[aria-current='page']::after { opacity: 1; top: 27px; height: 2px; border-radius: 10px; background: var(--color-ember); }
+  .hdr-socials { display: flex; align-items: center; gap: var(--spacing-24); margin: 0; padding: 0; list-style: none; }
+  .hdr-social { display: block; width: 24px; height: 24px; color: var(--color-obsidian); transition: color .25s ease; }
+  .hdr-social:hover { color: var(--color-ember); }
+  .hdr-cta { min-width: 136px; }
+  .hdr :global(a:focus-visible), .hdr-burger:focus-visible { outline: 1.5px solid var(--color-obsidian); outline-offset: 3px; border-radius: var(--radius-pills); }
+
+  .hdr-burger { display: none; position: relative; flex: none; width: 48px; height: 48px; padding: 0; border: 1.5px dotted var(--color-obsidian); border-radius: var(--radius-pills); background: transparent; color: var(--color-obsidian); cursor: pointer; }
+  .hdr-burger span { position: absolute; left: 14px; width: 18px; height: 2px; background: currentColor; border-radius: var(--radius-pills); }
+  .hdr-burger span:first-child { top: 18px; }
+  .hdr-burger span:last-child { top: 26px; }
+
+  .hdr-panel { display: none; }
+
+  @media (max-width: 1023px) {
+    .hdr { padding-inline: var(--spacing-16); }
+    .hdr-bar { padding-left: var(--spacing-16); }
+    .hdr-desk { display: none; }
+    .hdr-right { gap: var(--spacing-8); }
+    .hdr-burger { display: block; }
+    .hdr-panel { position: fixed; inset: 0; z-index: 1; display: flex; flex-direction: column; justify-content: space-between; gap: var(--spacing-40);
+      height: 100dvh; padding: 128px var(--spacing-32) var(--spacing-40); background: var(--color-limestone); overflow-y: auto; visibility: hidden; pointer-events: auto; }
+    .hdr-panel-nav { display: flex; flex-direction: column; gap: var(--spacing-16); }
+    .hdr-panel-link { font-size: 56px; line-height: 56px; letter-spacing: 0.02em; color: var(--color-obsidian); transition: color .25s ease; }
+    .hdr-panel-link:hover { color: var(--color-ember); }
+    .hdr-panel-foot { display: flex; flex-direction: column; gap: var(--spacing-32); padding-top: var(--spacing-32); border-top: 1.5px dotted var(--color-obsidian); }
+    .hdr-panel-foot .btn { width: 100%; }
+  }
+  @media (max-width: 479px) {
+    .hdr-cta { display: none; }
+  }
+</style>
+
+<script>
+  import { gsap, EASE, reduced } from '../scripts/motion.ts';
+
+  const header = document.querySelector<HTMLElement>('[data-header]');
+  if (header) {
+    const bar = header.querySelector<HTMLElement>('[data-bar]')!;
+    const logo = header.querySelector<HTMLElement>('[data-logo]')!;
+    const groups = header.querySelectorAll<HTMLElement>('[data-left], [data-right]');
+    const limestone = getComputedStyle(document.documentElement).getPropertyValue('--color-limestone').trim();
+    const D = reduced ? 0 : 0.45;
+    const mm = gsap.matchMedia();
+    let collapsed = false;
+    let apply: (on: boolean, instant?: boolean) => void = () => {};
+
+    // Desktop: width 1360 -> 812 centred pill, y 24 -> 16, Limestone fill, logo clipped to its icon, gaps 32 -> 24.
+    mm.add('(min-width: 1024px)', () => {
+      const tl = gsap.timeline({ paused: true, defaults: { duration: D, ease: EASE } })
+        .fromTo(bar, { width: () => bar.parentElement!.clientWidth - 80, y: 0, backgroundColor: 'rgba(247,246,242,0)' }, { width: 812, y: -8, backgroundColor: limestone }, 0)
+        .to(logo, { width: 34 }, 0)
+        .to(groups, { gap: 24 }, 0);
+      apply = (on, instant) => { if (instant) tl.progress(on ? 1 : 0).pause(); else on ? tl.play() : tl.reverse(); };
+      // re-read the expanded width (function-based start value); at the top hand the width back to CSS (100%)
+      const onResize = () => { tl.invalidate().progress(collapsed ? 1 : 0).pause(); if (!collapsed) gsap.set(bar, { clearProps: 'width' }); };
+      addEventListener('resize', onResize);
+      apply(collapsed, true);
+      return () => { removeEventListener('resize', onResize); gsap.set([bar, logo, ...groups], { clearProps: 'all' }); };
+    });
+    // Mobile: bar keeps its width, only lifts and takes the Limestone fill.
+    mm.add('(max-width: 1023px)', () => {
+      const tl = gsap.timeline({ paused: true, defaults: { duration: D, ease: EASE } })
+        .fromTo(bar, { y: 0, backgroundColor: 'rgba(247,246,242,0)' }, { y: -8, backgroundColor: limestone }, 0);
+      apply = (on, instant) => { if (instant) tl.progress(on ? 1 : 0).pause(); else on ? tl.play() : tl.reverse(); };
+      apply(collapsed, true);
+      return () => { closeMenu(true); gsap.set(bar, { clearProps: 'all' }); };
+    });
+
+    const onScroll = () => { const next = scrollY > 13; if (next !== collapsed) { collapsed = next; apply(collapsed); } };
+    addEventListener('scroll', onScroll, { passive: true });
+    collapsed = scrollY > 13; apply(collapsed, true);
+
+    // ---- Mobile menu ----
+    const panel = header.querySelector<HTMLElement>('[data-menu-panel]')!;
+    const burger = header.querySelector<HTMLButtonElement>('[data-burger]')!;
+    const lines = burger.querySelectorAll<HTMLElement>('[data-burger-line]');
+    const items = panel.querySelectorAll<HTMLElement>('[data-menu-item]');
+    let open = false;
+    const menuTl = gsap.timeline({ paused: true, defaults: { ease: EASE } })
+      .fromTo(panel, { autoAlpha: 0, clipPath: 'inset(0% 0% 100% 0%)' }, { autoAlpha: 1, clipPath: 'inset(0% 0% 0% 0%)', duration: reduced ? 0 : 0.55 }, 0)
+      .to(lines[0], { y: 4, rotate: 45, duration: reduced ? 0 : 0.3 }, 0)
+      .to(lines[1], { y: -4, rotate: -45, duration: reduced ? 0 : 0.3 }, 0)
+      .fromTo(items, { y: reduced ? 0 : 40, opacity: 0 }, { y: 0, opacity: 1, duration: reduced ? 0 : 0.45, stagger: reduced ? 0 : 0.05 }, reduced ? 0 : 0.15);
+    function setMenu(next: boolean, instant = false) {
+      if (next === open && !instant) return;
+      open = next;
+      burger.setAttribute('aria-expanded', String(open));
+      burger.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+      document.documentElement.style.overflow = open ? 'hidden' : '';
+      if (instant) menuTl.progress(open ? 1 : 0).pause(); else open ? menuTl.timeScale(1).play() : menuTl.timeScale(1.6).reverse();
+    }
+    function closeMenu(instant = false) { if (open || instant) setMenu(false, instant); }
+    burger.addEventListener('click', () => setMenu(!open));
+    panel.querySelectorAll('a').forEach((a) => a.addEventListener('click', () => closeMenu()));
+    addEventListener('keydown', (e) => { if (e.key === 'Escape' && open) { closeMenu(); burger.focus(); } });
+  }
+</script>

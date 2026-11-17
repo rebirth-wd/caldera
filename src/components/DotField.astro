@@ -1,0 +1,22 @@
+---
+// Pale halftone dot field used behind Products / Community / Sections (reference "background dots" image).
+// Dot radius is modulated by a large soft mask so it reads as a halftone, and the field drifts in x with scroll.
+const { height = '100%' } = Astro.props;
+---
+<div class="dotfield" aria-hidden="true" style={`height:${height}`}><div class="dotfield__inner" data-dotfield></div></div>
+<style>
+  .dotfield { position: absolute; inset: 0 0 auto 0; overflow: hidden; pointer-events: none; z-index: 0; }
+  .dotfield__inner { position: absolute; top: 0; bottom: 0; left: -50%; width: 200%; will-change: transform;
+    background-image: radial-gradient(circle, #d3d3cf 0 36%, transparent 39%); background-size: 19px 19px; }
+  /* larger dots in soft patches, same grid, so the field reads as a halftone (see reference/ref-y7260.jpg) */
+  .dotfield__inner::after { content: ''; position: absolute; inset: 0;
+    background-image: radial-gradient(circle, #cfcfcb 0 48%, transparent 51%); background-size: 19px 19px;
+    -webkit-mask-image: radial-gradient(ellipse 240px 200px at 12% 18%, #000 30%, transparent 100%), radial-gradient(ellipse 300px 220px at 34% 62%, #000 30%, transparent 100%), radial-gradient(ellipse 260px 240px at 55% 28%, #000 30%, transparent 100%), radial-gradient(ellipse 320px 200px at 72% 80%, #000 30%, transparent 100%), radial-gradient(ellipse 240px 260px at 90% 40%, #000 30%, transparent 100%);
+    mask-image: radial-gradient(ellipse 240px 200px at 12% 18%, #000 30%, transparent 100%), radial-gradient(ellipse 300px 220px at 34% 62%, #000 30%, transparent 100%), radial-gradient(ellipse 260px 240px at 55% 28%, #000 30%, transparent 100%), radial-gradient(ellipse 320px 200px at 72% 80%, #000 30%, transparent 100%), radial-gradient(ellipse 240px 260px at 90% 40%, #000 30%, transparent 100%); }
+</style>
+<script>
+  import { gsap, reduced } from '../scripts/motion.ts';
+  if (!reduced) document.querySelectorAll<HTMLElement>('[data-dotfield]').forEach((el) => {
+    gsap.fromTo(el, { xPercent: 6 }, { xPercent: -6, ease: 'none', scrollTrigger: { trigger: el.parentElement!, start: 'top bottom', end: 'bottom top', scrub: true } });
+  });
+</script>

@@ -1,0 +1,116 @@
+---
+// Products: 189px heading over the drifting dot field, two mirrored rows (text card + 768x589 media block).
+// Geometry follows REFERENCE.md "Products" (section 0,1852,1440,1990). data-ref = reference rect in page coords.
+import { products } from '../data/copy.ts';
+import { images } from '../data/images.ts';
+import DotField from './DotField.astro';
+import ProdGlyph from './ProdGlyph.astro';
+import ProdGraphicAssistant from './ProdGraphicAssistant.astro';
+import ProdGraphicEdge from './ProdGraphicEdge.astro';
+
+const rows = [
+  { tone: 'var(--color-plasma-violet)', glyph: 'plus', flip: false, h4w: 380, pLines: 3,
+    ref: { row: '56,2487,1328,589', card: '56,2487,544,589', media: '616,2487,768,589', tile: '96,2527,83,83', info: '96,2782,464,254', h4: '96,2782,380,80' } },
+  { tone: 'var(--color-ember)', glyph: 'burst', flip: true, h4w: 440, pLines: 4,
+    ref: { row: '56,3092,1328,589', card: '840,3092,544,589', media: '56,3092,768,589', tile: '880,3132,83,83', info: '880,3363,464,279', h4: '880,3363,440,80' } },
+].map((r, i) => ({ ...r, card: products.cards[i], img: images[products.cards[i].image] }));
+---
+<section class="prod" data-qa="products" data-ref="0,1852,1440,1990">
+  <DotField />
+  <div class="container-x prod__inner">
+    <h2 class="display prod__title" data-reveal="chars" data-qa="prod-heading" data-ref="56,2052,1328,355">
+      {products.lines.map((l, i) => <span class="prod__line">{l}{i < products.lines.length - 1 ? ' ' : ''}</span>)}
+    </h2>
+
+    {rows.map((r, i) => (
+      <div class:list={['prod__row', { 'prod__row--flip': r.flip }]} data-prod-row data-qa={`prod-row-${i + 1}`} data-ref={r.ref.row}>
+        <article class="prod__card" data-qa={`prod-card-${i + 1}`} data-ref={r.ref.card}>
+          <div class="prod__tile" data-qa={`prod-tile-${i + 1}`} data-ref={r.ref.tile}>
+            <svg width="55" height="55" viewBox="-27.5 -27.5 55 55" aria-hidden="true"><ProdGlyph kind={r.glyph} pitch={6} r={2.1} /></svg>
+          </div>
+          <div class="prod__info" style={`--h4w:${r.h4w}px;--plines:${r.pLines}`} data-qa={`prod-info-${i + 1}`} data-ref={r.ref.info}>
+            <h4 class="display prod__h4" data-qa={`prod-h4-${i + 1}`} data-ref={r.ref.h4}>{r.card.title}</h4>
+            <p class="prod__body">{r.card.body}</p>
+            <a class="btn btn-dotted prod__btn" href={r.card.button.href} data-qa={`prod-button-${i + 1}`}>
+              <span>{r.card.button.label}</span>
+              <svg class="prod__arrow" width="12" height="17" viewBox="0 0 12 17" aria-hidden="true"><path d="M0 0v17l12-8.5z" fill="currentColor" /></svg>
+            </a>
+          </div>
+        </article>
+
+        <div class="prod__media" style={`--tone:${r.tone}`} data-prod-media data-qa={`prod-media-${i + 1}`} data-ref={r.ref.media}>
+          <div class="prod__layer" data-prod-parallax>
+            {r.img?.url && (
+              <img class="prod__photo" src={r.img.url} alt={r.img.alt} width="768" height="589" loading="lazy" decoding="async"
+                data-credit={r.img.credit || undefined} onerror="this.style.display='none'" />
+            )}
+            <div class="prod__wash"></div>
+            <div class="prod__halftone"></div>
+          </div>
+          {i === 0 ? <ProdGraphicAssistant /> : <ProdGraphicEdge />}
+        </div>
+      </div>
+    ))}
+  </div>
+</section>
+
+<style>
+  .prod { position: relative; box-sizing: border-box; height: 1990px; padding: 200px 0 0; overflow: hidden; }
+  .prod__inner { position: relative; z-index: 1; }
+  .prod__title { font-size: var(--text-display); line-height: 177.66px; color: var(--color-obsidian); margin-bottom: var(--spacing-80); }
+  .prod__line { display: block; white-space: nowrap; }
+
+  .prod__row { display: flex; gap: var(--spacing-16); height: 589px; }
+  .prod__row + .prod__row { margin-top: var(--spacing-16); }
+  .prod__row--flip { flex-direction: row-reverse; }
+
+  .prod__card { flex: 0 0 calc((100% - 16px) * 544 / 1312); min-width: 0; box-sizing: border-box; padding: var(--spacing-40); border-radius: var(--radius-cards); background: var(--color-limestone); display: flex; flex-direction: column; justify-content: space-between; }
+  .prod__tile { width: 83px; height: 83px; border-radius: var(--radius-small); background: var(--color-obsidian); display: grid; place-items: center; flex: none; }
+  .prod__info { display: flex; flex-direction: column; align-items: flex-start; }
+  .prod__h4 { font-size: 40px; line-height: 40px; max-width: var(--h4w); width: 100%; min-height: 80px; color: var(--color-obsidian); }
+  /* paragraph slot keeps the reference line count so the heading sits at the measured y even when our copy runs shorter */
+  .prod__body { margin: var(--spacing-20) 0 var(--spacing-32); font-size: var(--text-body); line-height: 24.8px; min-height: calc(var(--plines) * 24.8px); color: var(--color-obsidian); }
+  .prod__btn { padding: var(--spacing-12) var(--spacing-20); gap: var(--spacing-18); }
+  .prod__arrow { transition: transform .3s cubic-bezier(.22, 1, .36, 1); }
+  .prod__btn:hover .prod__arrow, .prod__btn:focus-visible .prod__arrow { transform: translateX(5px); }
+
+  .prod__media { position: relative; flex: 1 1 0; min-width: 0; border-radius: var(--radius-cards); overflow: hidden; background: var(--tone); isolation: isolate; }
+  .prod__layer { position: absolute; inset: -7% 0; will-change: transform; background: var(--tone, inherit); }
+  /* duotone: greyscale photo multiplied into the tone (shadows -> obsidian, highlights -> tone), then a light tone wash */
+  .prod__photo { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; filter: grayscale(1) contrast(1.2) brightness(1.15); mix-blend-mode: multiply; opacity: .62; }
+  .prod__wash { position: absolute; inset: 0; background: var(--tone); mix-blend-mode: screen; opacity: .28; }
+  .prod__halftone { position: absolute; inset: 0; opacity: .5;
+    background-image: radial-gradient(circle, var(--color-obsidian) 0 34%, transparent 38%), radial-gradient(circle, var(--color-obsidian) 0 20%, transparent 24%);
+    background-size: 9px 9px, 9px 9px;
+    -webkit-mask-image: radial-gradient(ellipse 55% 60% at 100% 0%, #000 0, transparent 100%), radial-gradient(ellipse 60% 55% at 0% 100%, rgba(0,0,0,.55) 0, transparent 100%);
+    mask-image: radial-gradient(ellipse 55% 60% at 100% 0%, #000 0, transparent 100%), radial-gradient(ellipse 60% 55% at 0% 100%, rgba(0,0,0,.55) 0, transparent 100%); }
+
+  @media (max-width: 1100px) {
+    .prod { height: auto; padding: 120px 0 96px; }
+    .prod__title { font-size: clamp(44px, 13.125vw, 189px); line-height: .94; margin-bottom: var(--spacing-48); }
+    .prod__row, .prod__row--flip { flex-direction: column; height: auto; }
+    .prod__card { flex: none; min-height: 440px; gap: var(--spacing-48); }
+    .prod__body { min-height: 0; }
+    .prod__h4 { min-height: 0; }
+    .prod__media { flex: none; aspect-ratio: 768 / 589; }
+  }
+  @media (max-width: 600px) {
+    .prod { padding: 96px 0 64px; }
+    .prod__inner { padding-inline: 20px; }
+    .prod__card { padding: var(--spacing-24); min-height: 0; }
+    .prod__h4 { font-size: 32px; line-height: 32px; }
+    .prod__btn { white-space: normal; height: auto; min-height: 48px; text-align: left; }
+  }
+</style>
+
+<script>
+  import { gsap, EASE, reduced } from '../scripts/motion.ts';
+  if (!reduced) {
+    document.querySelectorAll<HTMLElement>('[data-prod-row]').forEach((row) => {
+      gsap.from(row, { y: 40, opacity: 0, duration: 0.9, ease: EASE, scrollTrigger: { trigger: row, start: 'top 88%', once: true } });
+    });
+    document.querySelectorAll<HTMLElement>('[data-prod-parallax]').forEach((layer) => {
+      gsap.fromTo(layer, { yPercent: -5 }, { yPercent: 5, ease: 'none', scrollTrigger: { trigger: layer.parentElement!, start: 'top bottom', end: 'bottom top', scrub: true } });
+    });
+  }
+</script>

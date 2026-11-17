@@ -1,0 +1,141 @@
+---
+// Ecosystem: centred 80px heading + dotted pill, four fused Ember stat cards, Limestone wordmark strip.
+// Geometry follows REFERENCE.md "Ecosystem" (section 0,727,1440,1125). data-ref = reference rect in page coords.
+import { ecosystem } from '../data/copy.ts';
+const cardX = [137, 433, 728, 1024];
+const cellX = [177, 365, 553, 741, 929, 1117];
+---
+<section class="eco" id="stack" data-qa="ecosystem" data-ref="0,727,1440,1125">
+  <div class="eco__head" data-qa="eco-heading-block" data-ref="283,895,874,256">
+    <h2 class="display eco__title" data-reveal="chars" data-qa="eco-h2">
+      {ecosystem.lines.map((l, i) => <span class="eco__line">{l}{i < ecosystem.lines.length - 1 ? ' ' : ''}</span>)}
+    </h2>
+    <a class="btn btn-dotted eco__btn" href={ecosystem.button.href} data-qa="eco-button" data-ref="605,1103,230,48">{ecosystem.button.label}</a>
+  </div>
+
+  <div class="eco__cards" data-eco-cards data-qa="eco-cards-row" data-ref="137,1231,1166,251">
+    {ecosystem.stats.map((s, i) => (
+      <>
+        {i > 0 && (
+          <svg class="eco__neck" width="16" height="141" viewBox="0 0 16 141" preserveAspectRatio="none" aria-hidden="true">
+            <path d="M-1 33H0A8 8 0 0 0 16 33H17V108H16A8 8 0 0 0 0 108H-1Z" fill="currentColor" />
+          </svg>
+        )}
+        <div class="eco__card" data-qa={`eco-stat-${i + 1}`} data-ref={`${cardX[i]},1231,280,251`}>
+          <p class="eco__label" data-eco-fade>{s.label}</p>
+          <p class="display eco__value" data-eco-fade data-eco-value={s.value}>{s.value}</p>
+        </div>
+      </>
+    ))}
+  </div>
+
+  <div class="eco__strip" data-eco-strip data-qa="eco-logo-strip" data-ref="137,1498,1166,154">
+    {ecosystem.stack.map((marks, i) => (
+      <>
+        {i > 0 && <span class="eco__divider" aria-hidden="true"></span>}
+        <div class="eco__cell" data-qa={`eco-cell-${i + 1}`} data-ref={`${cellX[i]},1538,146,74`}>
+          <div class="eco__slot" data-eco-slot>
+            {marks.map((m, k) => <span class="display eco__mark" aria-hidden={k > 0 ? 'true' : undefined}>{m}</span>)}
+          </div>
+        </div>
+      </>
+    ))}
+  </div>
+</section>
+
+<style>
+  .eco { box-sizing: border-box; height: 1125px; padding: 168px 56px 0; display: flex; flex-direction: column; align-items: center; overflow: hidden; }
+  .eco__head { width: 874px; max-width: 100%; height: 256px; display: flex; flex-direction: column; align-items: center; gap: var(--spacing-32); flex: none; }
+  .eco__title { font-size: var(--text-heading-2xl); line-height: 88px; text-align: center; color: var(--color-obsidian); }
+  .eco__line { display: block; white-space: nowrap; }
+  .eco__btn { min-width: 230px; padding: var(--spacing-12); }
+
+  .eco__cards { margin-top: var(--spacing-80); width: min(1166px, 100%); height: 251px; display: flex; align-items: center; flex: none; color: var(--color-ember); }
+  .eco__card { position: relative; flex: 1 1 0; min-width: 0; height: 251px; box-sizing: border-box; padding: var(--spacing-40); border-radius: var(--radius-cards); background: var(--color-ember); color: var(--color-limestone); }
+  .eco__neck { flex: none; width: 15.333px; overflow: visible; }
+  .eco__label { margin: 0; font: 500 18px/27px var(--font-body); white-space: nowrap; }
+  .eco__value { position: absolute; left: 40px; top: 147px; font-size: 64px; line-height: 64px; white-space: nowrap; font-variant-numeric: tabular-nums; }
+
+  .eco__strip { margin-top: var(--spacing-16); width: min(1166px, 100%); height: 154px; box-sizing: border-box; padding: var(--spacing-40); border-radius: var(--radius-cards); background: var(--color-limestone); display: flex; align-items: center; justify-content: space-between; flex: none; }
+  .eco__cell { width: 146px; height: 74px; display: flex; align-items: center; justify-content: center; flex: none; }
+  .eco__divider { width: 2px; height: 74px; flex: none; border-left: 1.5px dotted var(--color-obsidian); box-sizing: border-box; }
+  .eco__slot { position: relative; width: 146px; max-width: 100%; height: 54px; overflow: hidden; }
+  .eco__mark { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; text-align: center; font-size: 24px; line-height: 24px; letter-spacing: 0.02em; color: var(--color-obsidian); transform: translateY(-100%); will-change: transform; }
+  .eco__mark:first-child { transform: none; }
+
+  @media (max-width: 1277px) {
+    .eco { height: auto; padding-bottom: 120px; }
+    .eco__title { font-size: clamp(36px, 6.4vw, 80px); line-height: 1.1; }
+    .eco__head { height: auto; width: 100%; }
+    .eco__strip { height: auto; display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--spacing-24) var(--spacing-16); justify-items: center; }
+    .eco__cell { width: 100%; }
+    .eco__divider { display: none; }
+  }
+  @media (max-width: 900px) {
+    .eco { padding: 96px 20px 80px; }
+    .eco__cards { margin-top: var(--spacing-56); height: auto; display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .eco__neck { display: none; }
+    .eco__card { height: 190px; padding: var(--spacing-24); }
+    .eco__label { white-space: normal; font-size: 16px; line-height: 22px; }
+    .eco__value { left: 24px; top: auto; bottom: 24px; font-size: 48px; line-height: 48px; }
+    .eco__strip { margin-top: 14px; padding: var(--spacing-24); grid-template-columns: 1fr 1fr; }
+  }
+</style>
+
+<script>
+  import { gsap, ScrollTrigger, EASE, reduced } from '../scripts/motion.ts';
+
+  const root = document.querySelector<HTMLElement>('[data-qa="ecosystem"]');
+  if (root && !reduced) {
+    const cards = root.querySelector<HTMLElement>('[data-eco-cards]')!;
+    const strip = root.querySelector<HTMLElement>('[data-eco-strip]')!;
+    const fades = [...cards.querySelectorAll<HTMLElement>('[data-eco-fade]')];
+    const values = [...cards.querySelectorAll<HTMLElement>('[data-eco-value]')];
+    const slots = [...strip.querySelectorAll<HTMLElement>('[data-eco-slot]')];
+
+    // Appear: row + strip scale/fade in, then labels and values slide up with stagger.
+    gsap.set([cards, strip], { opacity: 0, scale: 0.9 });
+    gsap.set(fades, { opacity: 0, y: 16 });
+    gsap.set(slots, { opacity: 0, y: 12 });
+    const tl = gsap.timeline({ scrollTrigger: { trigger: cards, start: 'top 88%', once: true } });
+    tl.to(cards, { opacity: 1, scale: 1, duration: 0.7, ease: EASE })
+      .to(strip, { opacity: 1, scale: 1, duration: 0.7, ease: EASE }, 0.12)
+      .to(fades, { opacity: 1, y: 0, duration: 0.5, ease: EASE, stagger: 0.06 }, 0.35)
+      .to(slots, { opacity: 1, y: 0, duration: 0.5, ease: EASE, stagger: 0.06 }, 0.5);
+
+    // Count-up for single-number values ("<2s", "100%", "39k+"); ranges such as "2–3" are left as written.
+    values.forEach((el, i) => {
+      const final = el.dataset.ecoValue || '';
+      const m = final.match(/^(\D*)(\d+)(\D*)$/);
+      if (!m) return;
+      const target = Number(m[2]);
+      const state = { n: 0 };
+      tl.to(state, {
+        n: target, duration: 1.1, ease: 'power2.out',
+        onStart: () => { el.textContent = `${m[1]}0${m[3]}`; },
+        onUpdate: () => { el.textContent = `${m[1]}${Math.round(state.n)}${m[3]}`; },
+        onComplete: () => { el.textContent = final; },
+      }, 0.35 + i * 0.12);
+    });
+
+    // Wordmark cycle: current slides down and out, next slides in from above; staggered per cell, infinite.
+    const HOLD = 2.6, SWAP = 0.7;
+    const loops = slots.map((slot, i) => {
+      const marks = [...slot.querySelectorAll<HTMLElement>('.eco__mark')];
+      if (marks.length < 2) return null;
+      gsap.set(marks, { y: 0, yPercent: (k: number) => (k === 0 ? 0 : -100) });
+      const loop = gsap.timeline({ repeat: -1, paused: true, delay: i * 0.3 });
+      marks.forEach((cur, k) => {
+        const next = marks[(k + 1) % marks.length];
+        const at = k * (HOLD + SWAP) + HOLD;
+        loop.fromTo(cur, { yPercent: 0 }, { yPercent: 100, duration: SWAP, ease: 'power3.inOut', immediateRender: false }, at)
+            .fromTo(next, { yPercent: -100 }, { yPercent: 0, duration: SWAP, ease: 'power3.inOut', immediateRender: false }, at);
+      });
+      return loop;
+    });
+    ScrollTrigger.create({
+      trigger: strip, start: 'top bottom', end: 'bottom top',
+      onToggle: (self) => loops.forEach((l) => l && (self.isActive ? l.play() : l.pause())),
+    });
+  }
+</script>

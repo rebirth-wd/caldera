@@ -1,0 +1,9 @@
+---
+// Dot-matrix glyph (plus / burst) drawn as an SVG <g>; used in the icon tiles and inside the infographics.
+const { kind = 'plus', cx = 0, cy = 0, pitch = 6, r = 2, fill = 'var(--color-chalk)' } = Astro.props;
+const pts: number[][] = [];
+for (let i = -4; i <= 4; i++) { pts.push([i, 0]); if (i) pts.push([0, i]); }
+[[1, 1], [1, -1], [-1, 1], [-1, -1]].forEach((p) => pts.push(p));
+if (kind === 'burst') [2, 3].forEach((d) => [[d, d], [d, -d], [-d, d], [-d, -d]].forEach((p) => pts.push(p)));
+---
+<g fill={fill} data-glyph>{pts.map(([x, y]) => <circle cx={cx + x * pitch} cy={cy + y * pitch} r={r} />)}</g>
