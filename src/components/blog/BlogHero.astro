@@ -1,0 +1,80 @@
+---
+// Blog index hero: Sulfur banner (title, intro, looping graphic) + featured post card.
+// Geometry: reference/blog/REFERENCE.md "Hero" (section 0,112,1440,817.4).
+import BlogGraphic from './BlogGraphic.astro';
+import BlogMedia from './BlogMedia.astro';
+import { blogHero, posts, catLabel } from '../../data/blog';
+import { site } from '../../data/copy';
+const post = posts[0];
+const href = "#"; // post pages are out of scope (main-menu pages only)
+---
+<section class="bh" data-qa="blog-hero" data-ref="0,112,1440,817">
+  <div class="container-x bh__inner">
+    <div class="bh__banner" data-qa="blog-banner" data-ref="56,112,1328,363">
+      <div class="bh__info">
+        <h1 class="display bh__title" data-reveal="chars" data-qa="blog-title" data-ref="112,168,677,165">
+          {blogHero.lines.map((l, i) => <span class="bh__line">{l}{i < blogHero.lines.length - 1 ? ' ' : ''}</span>)}
+        </h1>
+        <p class="bh__sub" data-qa="blog-sub" data-ref="112,365,506,54">{blogHero.sub}</p>
+      </div>
+      <div class="bh__art" data-qa="blog-art" data-ref="714,36,630,516"><BlogGraphic /></div>
+    </div>
+
+    <article class="bh__feat" data-qa="blog-featured" data-ref="56,491,1328,438">
+      <a class="bh__img" href={href} tabindex="-1" aria-hidden="true" data-qa="blog-featured-image" data-ref="88,523,666,374">
+        <BlogMedia image={post.image} tone={post.tone} eager w={1332} h={748} />
+      </a>
+      <div class="bh__meta">
+        <p class="bh__date" data-qa="blog-featured-date" data-ref="810,531,534,25"><time>{post.date}</time></p>
+        <div class="bh__body" data-qa="blog-featured-inner" data-ref="810,635,534,254">
+          <span class="bh__tag" data-qa="blog-featured-tag" data-ref="810,635,126,35">{catLabel[post.cat]}</span>
+          <h2 class="display bh__h" data-qa="blog-featured-title" data-ref="810,694,534,123"><a href={href}>{post.title}</a></h2>
+          <a class="btn btn-dotted bh__btn" href={href} data-qa="blog-featured-button" data-ref="810,841,160,48" aria-label={`${blogHero.read}: ${post.title}`}>
+            <span>{blogHero.read}</span>
+            <svg class="bh__arrow" width="12" height="17" viewBox="0 0 12 17" aria-hidden="true"><path d="M0 0v17l12-8.5z" fill="currentColor" /></svg>
+          </a>
+        </div>
+      </div>
+    </article>
+  </div>
+</section>
+
+<style>
+  .bh__inner { display: flex; flex-direction: column; gap: var(--spacing-16); }
+  .bh__banner { position: relative; box-sizing: border-box; display: flex; align-items: center; padding: var(--spacing-56); border-radius: var(--radius-3xl-3); background: var(--color-sulfur); overflow: hidden; }
+  .bh__info { position: relative; z-index: 1; display: flex; flex-direction: column; gap: var(--spacing-32); width: 677px; max-width: 100%; }
+  .bh__title { font-size: 88px; line-height: 82.72px; color: var(--color-obsidian); }
+  .bh__line { display: block; white-space: nowrap; }
+  .bh__sub { margin: 0; max-width: 506px; min-height: 54px; font-size: 18px; line-height: 27px; }
+  .bh__art { position: absolute; left: 658px; top: -76px; width: 630px; height: 516px; pointer-events: none; }
+
+  .bh__feat { box-sizing: border-box; display: flex; align-items: center; gap: var(--spacing-56); padding: var(--spacing-32) var(--spacing-40) var(--spacing-32) var(--spacing-32); border-radius: var(--radius-3xl-3); background: var(--color-limestone); }
+  .bh__img { position: relative; flex: 0 0 53%; aspect-ratio: 665.7 / 374; border-radius: 18px; overflow: hidden; display: block; }
+  .bh__img:hover :global(.bm__photo) { transform: scale(1.04); }
+  .bh__meta { flex: 1 1 0; min-width: 0; align-self: stretch; box-sizing: border-box; display: flex; flex-direction: column; justify-content: space-between; align-items: flex-start; padding: var(--spacing-8) 0; }
+  .bh__date { margin: 0; width: 100%; font-size: 16px; line-height: 24.8px; }
+  .bh__body { display: flex; flex-direction: column; align-items: flex-start; gap: var(--spacing-24); width: 100%; }
+  .bh__tag { padding: 7px var(--spacing-12); border-radius: var(--radius-3xl); background: var(--color-sulfur); font-size: 14px; line-height: 21px; }
+  .bh__h { width: 100%; min-height: 123px; font-size: 41px; line-height: 41px; color: var(--color-obsidian); }
+  .bh__h a { color: inherit; }
+  .bh__btn { padding: var(--spacing-12) var(--spacing-20); gap: var(--spacing-18); }
+  .bh__arrow { transition: transform .3s cubic-bezier(.22, 1, .36, 1); }
+  .bh__btn:hover .bh__arrow, .bh__btn:focus-visible .bh__arrow { transform: translateX(5px); }
+
+  @media (max-width: 1100px) {
+    .bh__art { left: auto; right: -160px; opacity: .9; }
+    .bh__feat { flex-direction: column; align-items: stretch; gap: var(--spacing-32); padding: var(--spacing-24); }
+    .bh__img { flex: none; }
+    .bh__meta { gap: var(--spacing-24); padding: 0; }
+    .bh__h { min-height: 0; }
+  }
+  @media (max-width: 640px) {
+    .bh__inner { padding-inline: 20px; }
+    .bh__banner { padding: var(--spacing-32) var(--spacing-24) 220px; border-radius: var(--radius-3xl-2); }
+    .bh__title { font-size: 60px; line-height: 56px; }
+    .bh__art { left: 40px; right: auto; top: auto; bottom: -230px; width: 460px; height: 377px; }
+    .bh__feat { padding: var(--spacing-12) var(--spacing-12) var(--spacing-24); border-radius: var(--radius-3xl-2); }
+    .bh__meta { padding: 0 var(--spacing-8); }
+    .bh__h { font-size: 32px; line-height: 34px; }
+  }
+</style>

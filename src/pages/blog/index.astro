@@ -1,0 +1,15 @@
+---
+import Base from '../../layouts/Base.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import BlogHero from '../../components/blog/BlogHero.astro';
+import BlogList from '../../components/blog/BlogList.astro';
+---
+<Base title="Amet — Lorem Ipsum">
+  <Header />
+  <main>
+    <div aria-hidden="true" style="height:112px"></div>
+    <BlogHero /><BlogList />
+  </main>
+  <Footer />
+</Base>

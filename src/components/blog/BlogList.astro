@@ -1,0 +1,134 @@
+---
+// "Latest" list: centred heading, category filter bar, 2-column card grid, "more" button.
+// Geometry: reference/blog/REFERENCE.md "Articles" (section 0,929.4,1440,2442.5). Filter + "more" work client-side.
+import BlogCard from './BlogCard.astro';
+import { blogList, categories, posts } from '../../data/blog';
+const PAGE = 6;
+const grid = posts.slice(1);
+const glyphs: Record<string, string> = {
+  grid: '<circle cx="10" cy="10" r="5"/><circle cx="22" cy="10" r="5"/><circle cx="10" cy="22" r="5"/><circle cx="22" cy="22" r="5"/>',
+  person: '<circle cx="16" cy="10" r="6"/><path d="M4 28c0-7 5-11 12-11s12 4 12 11z"/>',
+  trophy: '<path d="M9 5h14v8a7 7 0 0 1-14 0z"/><path d="M4 7h5v3H7a3 3 0 0 0 3 3v3a6 6 0 0 1-6-6zM28 7h-5v3h2a3 3 0 0 1-3 3v3a6 6 0 0 0 6-6zM14 19h4v4h-4zM10 23h12v4H10z"/>',
+  spark: '<path d="M18 3 16 13h11L14 29l2-10H5z"/>',
+  badge: '<path fill-rule="evenodd" d="M16 3a13 13 0 1 1 0 26 13 13 0 0 1 0-26zm0 6-2.2 4.8L9 16l4.800 2.200L16 23l2.200-4.800L23 16l-4.800-2.200z"/>',
+};
+const first = { card: '56,1345,656,588', img: '72,1361,624,351', tag: '88,1744,81,23', title: '88,1783,592,77', date: '88,1876,592,25' };
+---
+<section class="bl" data-qa="blog-articles" data-ref="0,929,1440,2443" aria-labelledby="bl-heading" data-bl data-page={PAGE}>
+  <div class="container-x bl__inner">
+    <h2 id="bl-heading" class="display bl__h2" data-reveal="chars" data-qa="blog-list-heading" data-ref="56,1089,1328,88">{blogList.title}</h2>
+
+    <div class="bl__nav" role="group" aria-label={`${blogList.title} filter`} data-qa="blog-filter" data-ref="56,1241,1328,80" data-bl-nav>
+      <span class="bl__pill" aria-hidden="true" data-bl-pill></span>
+      {categories.map((c, i) => (
+        <>
+          <button type="button" class="bl__tab" aria-pressed={i === 0 ? 'true' : 'false'} data-bl-tab={c.key}
+            data-qa={`blog-tab-${i + 1}`} data-ref={`${64 + i * 264},1249,254,64`}>
+            <svg width="32" height="32" viewBox="0 0 32 32" fill="currentColor" aria-hidden="true" set:html={glyphs[c.glyph]} />
+            <span>{c.label}</span>
+          </button>
+          <span class:list={['bl__div', { 'is-off': i === 0 || i === categories.length - 1 }]} aria-hidden="true" data-bl-div></span>
+        </>
+      ))}
+    </div>
+
+    <ul class="bl__grid" data-qa="blog-grid" data-ref="56,1345,1328,1795" data-bl-grid aria-live="polite">
+      {grid.map((p, i) => <BlogCard post={p} refs={i === 0 ? first : undefined} hidden={i >= PAGE} />)}
+    </ul>
+    <p class="bl__empty" data-bl-empty hidden>Lorem ipsum dolor sit amet.</p>
+
+    <div class="bl__more">
+      <button type="button" class="bl__btn" data-bl-more data-qa="blog-more" data-ref="614,3196,212,56">{blogList.more}</button>
+    </div>
+  </div>
+</section>
+
+<style>
+  .bl { box-sizing: border-box; padding: 160px 0 120px; }
+  .bl__h2 { font-size: 80px; line-height: 88px; text-align: center; color: var(--color-obsidian); margin-bottom: var(--spacing-64); }
+
+  .bl__nav { position: relative; box-sizing: border-box; display: flex; align-items: center; height: 80px; padding: 6.5px 0 6.5px 6.5px; border: 1.5px dotted var(--color-obsidian); border-radius: var(--radius-3xl-3); margin-bottom: var(--spacing-24); }
+  .bl__pill { position: absolute; left: 0; top: 6.5px; width: 254px; height: 64px; border-radius: var(--radius-heading-lg, 48px); background: var(--color-ember); transform: translateX(6.5px); pointer-events: none; }
+  .bl__tab { position: relative; flex: 1 1 0; min-width: 0; height: 64px; display: flex; align-items: center; justify-content: center; gap: var(--spacing-8); padding: var(--spacing-8) var(--spacing-16);
+    border: 0; border-radius: 48px; background: transparent; color: var(--color-obsidian); font: 500 18px/27px var(--font-body); cursor: pointer; transition: color .3s ease; }
+  .bl__tab svg { flex: none; }
+  .bl__tab span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .bl__tab[aria-pressed='true'] { color: var(--btn-text-on-ember); }
+  .bl__tab:focus-visible, .bl__btn:focus-visible { outline: 2px solid var(--color-obsidian); outline-offset: 2px; }
+  .bl__div { flex: none; width: 0; height: 51px; margin-left: var(--spacing-8); border-left: 2px dotted var(--color-obsidian); transition: opacity .3s ease; }
+  .bl__div.is-off { opacity: 0; }
+
+  .bl__grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--spacing-16); margin: 0; padding: 0; list-style: none; }
+  .bl__empty { margin: var(--spacing-48) 0; text-align: center; font-size: 18px; line-height: 27px; }
+  .bl__more { display: flex; justify-content: center; height: 112px; align-items: flex-end; }
+  .bl__more.is-done { visibility: hidden; }
+  .bl__btn { width: 212px; height: 56px; padding: 0 var(--spacing-16); border: 0; border-radius: var(--radius-full-2); background: var(--color-obsidian); color: var(--color-limestone); font: 500 18px/20px var(--font-body); cursor: pointer; transition: opacity .25s ease; }
+  .bl__btn:hover { opacity: .9; }
+
+  @media (max-width: 1100px) {
+    .bl { padding: 120px 0 96px; }
+    .bl__nav { height: auto; flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; }
+    .bl__nav::-webkit-scrollbar { display: none; }
+    .bl__tab { flex: 0 0 auto; min-width: 190px; }
+    .bl__pill { width: 190px; }
+  }
+  @media (max-width: 760px) {
+    .bl__grid { grid-template-columns: minmax(0, 1fr); }
+  }
+  @media (max-width: 640px) {
+    .bl { padding: 80px 0 64px; }
+    .bl__inner { padding-inline: 20px; }
+    .bl__h2 { font-size: 52px; line-height: 56px; margin-bottom: var(--spacing-40); }
+    .bl__tab { min-width: 0; padding-inline: var(--spacing-20); }
+  }
+</style>
+
+<script>
+  import { gsap, EASE, reduced } from '../../scripts/motion';
+
+  const root = document.querySelector<HTMLElement>('[data-bl]');
+  if (root) {
+    const PAGE = Number(root.dataset.page) || 6;
+    const nav = root.querySelector<HTMLElement>('[data-bl-nav]')!;
+    const pill = root.querySelector<HTMLElement>('[data-bl-pill]')!;
+    const tabs = [...root.querySelectorAll<HTMLButtonElement>('[data-bl-tab]')];
+    const divs = [...root.querySelectorAll<HTMLElement>('[data-bl-div]')];
+    const cards = [...root.querySelectorAll<HTMLElement>('[data-bl-card]')];
+    const more = root.querySelector<HTMLButtonElement>('[data-bl-more]')!;
+    const empty = root.querySelector<HTMLElement>('[data-bl-empty]')!;
+    let cat = 'all'; let limit = PAGE;
+
+    const placePill = (animate: boolean) => {
+      const i = tabs.findIndex((t) => t.dataset.blTab === cat); const t = tabs[i];
+      divs.forEach((d, k) => d.classList.toggle('is-off', k === i || k === i - 1 || k === divs.length - 1));
+      gsap.to(pill, { x: t.offsetLeft, width: t.offsetWidth, duration: animate && !reduced ? 0.45 : 0, ease: EASE, overwrite: true });
+    };
+    const apply = (animate: boolean) => {
+      const match = cards.filter((c) => cat === 'all' || c.dataset.cat === cat);
+      const show = new Set(match.slice(0, limit)); const fresh: HTMLElement[] = [];
+      cards.forEach((c) => { const on = show.has(c); if (on && c.hidden) fresh.push(c); c.hidden = !on; });
+      more.parentElement!.classList.toggle('is-done', match.length <= limit);
+      more.disabled = match.length <= limit; empty.hidden = match.length > 0;
+      root.dataset.cat = cat; root.dataset.shown = String(show.size);
+      if (animate && !reduced && fresh.length) gsap.fromTo(fresh, { opacity: 0, y: 32 }, { opacity: 1, y: 0, duration: 0.5, ease: EASE, stagger: 0.06, clearProps: 'transform,opacity' });
+      import('../../scripts/motion').then((m) => m.ScrollTrigger.refresh());
+    };
+    tabs.forEach((t) => t.addEventListener('click', () => {
+      if (t.dataset.blTab === cat) return;
+      cat = t.dataset.blTab!; limit = PAGE;
+      tabs.forEach((o) => o.setAttribute('aria-pressed', String(o === t)));
+      cards.forEach((c) => { c.hidden = true; }); // re-enter everything that matches
+      placePill(true); apply(true);
+    }));
+    more.addEventListener('click', () => { limit += PAGE; apply(true); });
+    placePill(false); apply(false);
+    window.addEventListener('resize', () => placePill(false));
+
+    if (!reduced) {
+      gsap.from(cards.filter((c) => !c.hidden).map((c) => c.firstElementChild), {
+        y: 40, opacity: 0, duration: 0.7, ease: EASE, stagger: 0.08, clearProps: 'transform,opacity',
+        scrollTrigger: { trigger: root.querySelector('[data-bl-grid]'), start: 'top 85%', once: true },
+      });
+    }
+  }
+</script>
